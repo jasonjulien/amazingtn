@@ -62,16 +62,13 @@ export default function Footer() {
 
         {/* Brand column */}
         <div style={brandColStyle}>
-          <Link href="/" style={logoWrapStyle}>
-            <div style={logoBgStyle}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                <path d="M8 6l4-4 4 4" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M3 11l9-9 9 9" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M5 10v9a1 1 0 001 1h4v-4h4v4h4a1 1 0 001-1v-9" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </div>
-            <span style={logoTextStyle}>Amazing Tennessee</span>
-          </Link>
+          <Link href="/" style={{ display: 'flex', alignItems: 'center' }}>
+  <img
+    src="/logo-light.svg"
+    alt="Amazing Tennessee"
+    style={{ height: '56px', width: 'auto' }}
+  />
+</Link>
           <p style={taglineStyle}>
             Discover the beauty, music, and hospitality of the Volunteer State. Your adventure awaits.
           </p>
