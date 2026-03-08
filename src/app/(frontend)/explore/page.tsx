@@ -4,21 +4,7 @@ import { useState } from 'react'
 import FilterBar, { Region } from '@/components/FilterBar'
 import DestinationCard, { Category } from '@/components/DestinationCard'
 import Header from '@/components/Header'
-
-const allDestinations = [
-  { slug: 'graceland', name: 'Graceland', shortDescription: 'The legendary home of Elvis Presley, featuring the iconic mansion, museums, and memorabilia.', city: 'Memphis', region: 'west' as const, category: 'music' as const, featured: true },
-  { slug: 'great-smoky-mountains', name: 'Great Smoky Mountains National Park', shortDescription: "America's most visited national park with stunning mountain views, wildlife, and hiking trails.", city: 'Gatlinburg', region: 'east' as const, category: 'nature' as const, featured: true },
-  { slug: 'grand-ole-opry', name: 'Grand Ole Opry', shortDescription: 'The legendary home of country music, hosting live performances since 1925.', city: 'Nashville', region: 'middle' as const, category: 'music' as const, featured: true },
-  { slug: 'beale-street', name: 'Beale Street', shortDescription: 'The home of the blues, lined with legendary clubs, restaurants, and live music venues.', city: 'Memphis', region: 'west' as const, category: 'music' as const },
-  { slug: 'ruby-falls', name: 'Ruby Falls', shortDescription: "America's tallest and deepest underground waterfall, located deep inside Lookout Mountain.", city: 'Chattanooga', region: 'east' as const, category: 'nature' as const },
-  { slug: 'jack-daniels-distillery', name: 'Jack Daniels Distillery', shortDescription: "Tour the world's oldest registered distillery and learn the secrets of Tennessee whiskey.", city: 'Lynchburg', region: 'middle' as const, category: 'food' as const, featured: true },
-  { slug: 'dollywood', name: 'Dollywood', shortDescription: 'Award-winning theme park featuring world-class rides, shows, and Appalachian culture.', city: 'Pigeon Forge', region: 'east' as const, category: 'family' as const, featured: true },
-  { slug: 'parthenon', name: 'The Parthenon', shortDescription: 'A full-scale replica of the original Parthenon in Athens, featuring a 42-foot Athena statue.', city: 'Nashville', region: 'middle' as const, category: 'history' as const },
-  { slug: 'ocoee-river', name: 'Ocoee River Whitewater', shortDescription: 'Olympic-level whitewater rafting on the river that hosted the 1996 Olympics.', city: 'Polk County', region: 'east' as const, category: 'adventure' as const },
-  { slug: 'cades-cove', name: 'Cades Cove', shortDescription: 'A broad valley surrounded by mountains, known for wildlife viewing and historic buildings.', city: 'Great Smoky Mountains', region: 'east' as const, category: 'nature' as const },
-  { slug: 'national-civil-rights-museum', name: 'National Civil Rights Museum', shortDescription: 'Located at the Lorraine Motel, chronicling the American civil rights movement.', city: 'Memphis', region: 'west' as const, category: 'history' as const, featured: true },
-  { slug: 'tennessee-aquarium', name: 'Tennessee Aquarium', shortDescription: 'World-class aquarium featuring freshwater and ocean exhibits on the Tennessee River.', city: 'Chattanooga', region: 'east' as const, category: 'family' as const },
-]
+import { destinations as allDestinations } from '@/components/destinations-data'
 
 export default function ExplorePage() {
   const [region,   setRegion]   = useState<Region>('all')
