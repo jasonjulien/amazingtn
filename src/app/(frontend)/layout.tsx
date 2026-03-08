@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 import './globals.css'
-import HeaderWrapper from '@/components/HeaderWrapper'
 import Footer from '@/components/Footer'
 
 export const metadata: Metadata = {
@@ -16,10 +15,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <HeaderWrapper />
-        <main style={{ paddingTop: '100px' }}>
-          {children}
-        </main>
+        {children}
         <Footer />
       </body>
     </html>
