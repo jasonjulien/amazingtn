@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import Footer from '@/components/Footer'
+import { ItineraryProvider } from '@/context/ItineraryContext'
 
 export const metadata: Metadata = {
   title: 'Amazing Tennessee — Discover the Volunteer State',
@@ -15,8 +16,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        {children}
-        <Footer />
+        <ItineraryProvider>
+          {children}
+          <Footer />
+        </ItineraryProvider>
       </body>
     </html>
   )

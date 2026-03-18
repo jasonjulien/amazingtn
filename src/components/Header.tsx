@@ -15,7 +15,7 @@ const navLinks = [
   { label: 'Explore',   href: '/explore' },
   { label: 'Regions',   href: '/regions' },
   { label: 'Cities',    href: '/cities' },
-  { label: 'Plan Trip', href: '/plan' },
+  { label: 'Plan Trip', href: '/itinerary' },
 ]
 
 export default function Header({ variant = 'white' }: HeaderProps) {
@@ -30,7 +30,7 @@ export default function Header({ variant = 'white' }: HeaderProps) {
       top:                  0, left: 0, right: 0,
       height:               '100px',
       zIndex:               100,
-      background:           isTransparent ? 'transparent' : 'rgba(255,255,255,0.92)',
+      background:           isTransparent ? 'transparent' : 'rgba(255,255,255,0.82)',
       backdropFilter:       isTransparent ? 'none' : 'blur(12px)',
       WebkitBackdropFilter: isTransparent ? 'none' : 'blur(12px)',
       boxShadow:            isTransparent ? 'none' : '0 1px 2px rgba(0,0,0,.05)',
@@ -86,7 +86,7 @@ export default function Header({ variant = 'white' }: HeaderProps) {
 
         {/* CTA */}
         <Link
-          href="/plan"
+          href="/itinerary"
           onMouseEnter={() => setCtaHovered(true)}
           onMouseLeave={() => setCtaHovered(false)}
           style={{

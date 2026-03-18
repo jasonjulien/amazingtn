@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { Category } from './DestinationCard'
+import { AllIcon, MusicIcon, NatureIcon, HistoryIcon, FoodIcon, AdventureIcon, FamilyIcon, SearchIcon } from './Icons'
 
 export type Region = 'all' | 'east' | 'middle' | 'west'
 
@@ -19,14 +20,14 @@ const regions: { value: Region; label: string }[] = [
   { value: 'west',   label: 'West Tennessee' },
 ]
 
-const categories: { value: Category | 'all'; label: string; icon: string }[] = [
-  { value: 'all',       label: 'All',                   icon: '✦' },
-  { value: 'music',     label: 'Music & Entertainment', icon: '🎵' },
-  { value: 'nature',    label: 'Nature & Outdoors',      icon: '🌲' },
-  { value: 'history',   label: 'History & Culture',      icon: '🏛' },
-  { value: 'food',      label: 'Food & Drink',            icon: '🍖' },
-  { value: 'adventure', label: 'Adventure',               icon: '⚡' },
-  { value: 'family',    label: 'Family Fun',              icon: '🎡' },
+const categories: { value: Category | 'all'; label: string; icon: React.ReactNode }[] = [
+  { value: 'all',       label: 'All',                   icon: <AllIcon size={15} /> },
+  { value: 'music',     label: 'Music & Entertainment', icon: <MusicIcon size={15} /> },
+  { value: 'nature',    label: 'Nature & Outdoors',      icon: <NatureIcon size={15} /> },
+  { value: 'history',   label: 'History & Culture',      icon: <HistoryIcon size={15} /> },
+  { value: 'food',      label: 'Food & Drink',            icon: <FoodIcon size={15} /> },
+  { value: 'adventure', label: 'Adventure',               icon: <AdventureIcon size={15} /> },
+  { value: 'family',    label: 'Family Fun',              icon: <FamilyIcon size={15} /> },
 ]
 
 export default function FilterBar({
@@ -56,42 +57,21 @@ export default function FilterBar({
 
   return (
     <div style={{
-      position:   'sticky',
-      top:        '100px', /* matches header height */
-      zIndex:     90,
-      background: '#fff',
+      position:     'sticky',
+      top:          '100px',
+      zIndex:       90,
+      background:   '#fff',
       borderBottom: '1px solid #e5e5e5',
-      boxShadow:  '0 1px 2px rgba(0,0,0,.05)',
+      boxShadow:    '0 1px 2px rgba(0,0,0,.05)',
     }}>
-      <div style={{
-        maxWidth: '1440px',
-        margin:   '0 auto',
-        padding:  '0 48px',
-      }}>
+      <div style={{ maxWidth: '1440px', margin: '0 auto', padding: '0 48px' }}>
 
         {/* Row 1: Search + Region pills */}
-        <div style={{
-          display:     'flex',
-          alignItems:  'center',
-          gap:         '16px',
-          padding:     '16px 0 12px',
-          flexWrap:    'wrap',
-        }}>
-
-          {/* Search input */}
-          <div style={{
-            position:     'relative',
-            flexShrink:   0,
-            width:        '340px',
-          }}>
-            <div style={{
-              position:  'absolute',
-              left:      '12px',
-              top:       '50%',
-              transform: 'translateY(-50%)',
-              pointerEvents: 'none',
-            }}>
-              <SearchIcon />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '14px 0 10px', flexWrap: 'wrap' }}>
+          {/* Search */}
+          <div style={{ position: 'relative', flexShrink: 0, width: '320px' }}>
+            <div style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: '#94a3b8' }}>
+              <SearchIcon size={16} />
             </div>
             <input
               type="text"
@@ -99,18 +79,15 @@ export default function FilterBar({
               value={searchQuery}
               onChange={handleSearch}
               style={{
-                width:        '100%',
-                height:       '36px',
-                paddingLeft:  '40px',
-                paddingRight: '16px',
+                width: '100%', height: '36px',
+                paddingLeft: '38px', paddingRight: '16px',
                 borderRadius: '9999px',
-                border:       '1px solid #e2e8f0',
-                background:   '#fff',
-                fontSize:     '13px',
-                color:        '#1e293b',
-                outline:      'none',
-                boxShadow:    '0 1px 2px rgba(0,0,0,.05)',
-                fontFamily:   'inherit',
+                border: '1px solid #e2e8f0',
+                background: '#fff',
+                fontSize: '13px', color: '#1e293b',
+                outline: 'none',
+                boxShadow: '0 1px 2px rgba(0,0,0,.05)',
+                fontFamily: 'inherit',
               }}
             />
           </div>
@@ -128,21 +105,12 @@ export default function FilterBar({
           </div>
         </div>
 
-        {/* Row 2: Category chips + result count */}
-        <div style={{
-          display:        'flex',
-          alignItems:     'center',
-          justifyContent: 'space-between',
-          paddingBottom:  '12px',
-        }}>
-          <div style={{
-            display:  'flex',
-            gap:      '8px',
-            flexWrap: 'wrap',
-          }}>
+        {/* Row 2: Category chips + count */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingBottom: '12px' }}>
+          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
             {categories.map(c => (
               <CategoryChip
-                key={c.value}
+                key={String(c.value)}
                 label={c.label}
                 icon={c.icon}
                 active={activeCategory === c.value}
@@ -150,7 +118,6 @@ export default function FilterBar({
               />
             ))}
           </div>
-
           {resultCount !== undefined && (
             <span style={{ fontSize: '14px', color: '#475569', flexShrink: 0, marginLeft: '16px' }}>
               Showing <strong style={{ color: '#0f172a' }}>{resultCount}</strong> attractions
@@ -163,13 +130,7 @@ export default function FilterBar({
   )
 }
 
-/* ─── Sub-components ─────────────────────────── */
-
-function RegionPill({ label, active, onClick }: {
-  label:   string
-  active:  boolean
-  onClick: () => void
-}) {
+function RegionPill({ label, active, onClick }: { label: string; active: boolean; onClick: () => void }) {
   const [hovered, setHovered] = useState(false)
   return (
     <button
@@ -177,23 +138,15 @@ function RegionPill({ label, active, onClick }: {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
-        height:       '32px',
-        padding:      '0 16px',
+        height: '32px', padding: '0 16px',
         borderRadius: '9999px',
-        fontSize:     '11.5px',
-        fontWeight:   active ? 600 : 400,
-        border:       active ? 'none' : '1px solid #e5e5e5',
-        background:   active
-          ? '#f59e0b'
-          : hovered ? '#f9fafb' : '#fff',
-        color:        active ? '#fff' : '#0a0a0a',
-        boxShadow:    active
-          ? '0 1px 3px rgba(0,0,0,.1)'
-          : '0 1px 2px rgba(0,0,0,.05)',
-        cursor:       'pointer',
-        fontFamily:   'inherit',
-        transition:   'background 0.15s ease, color 0.15s ease',
-        whiteSpace:   'nowrap',
+        fontSize: '11.5px', fontWeight: active ? 600 : 400,
+        border: active ? 'none' : '1px solid #e5e5e5',
+        background: active ? '#f59e0b' : hovered ? '#f9fafb' : '#fff',
+        color: active ? '#fff' : '#0a0a0a',
+        boxShadow: active ? '0 1px 3px rgba(0,0,0,.1)' : '0 1px 2px rgba(0,0,0,.05)',
+        cursor: 'pointer', fontFamily: 'inherit',
+        transition: 'all 0.15s ease', whiteSpace: 'nowrap',
       }}
     >
       {label}
@@ -202,10 +155,7 @@ function RegionPill({ label, active, onClick }: {
 }
 
 function CategoryChip({ label, icon, active, onClick }: {
-  label:   string
-  icon:    string
-  active:  boolean
-  onClick: () => void
+  label: string; icon: React.ReactNode; active: boolean; onClick: () => void
 }) {
   const [hovered, setHovered] = useState(false)
   return (
@@ -214,37 +164,20 @@ function CategoryChip({ label, icon, active, onClick }: {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
-        display:      'inline-flex',
-        alignItems:   'center',
-        gap:          '6px',
-        height:       '36px',
-        padding:      '0 16px',
+        display: 'inline-flex', alignItems: 'center', gap: '6px',
+        height: '36px', padding: '0 14px',
         borderRadius: '9999px',
-        fontSize:     '13px',
-        fontWeight:   active ? 600 : 400,
-        border:       'none',
-        background:   active
-          ? '#0f172a'
-          : hovered ? '#e2e8f0' : '#f1f5f9',
-        color:        active ? '#fff' : '#475569',
-        cursor:       'pointer',
-        fontFamily:   'inherit',
-        transition:   'background 0.15s ease, color 0.15s ease',
-        whiteSpace:   'nowrap',
+        fontSize: '13px', fontWeight: active ? 600 : 400,
+        border: 'none',
+        background: active ? '#0f172a' : hovered ? '#e2e8f0' : '#f1f5f9',
+        color: active ? '#fff' : '#475569',
+        cursor: 'pointer', fontFamily: 'inherit',
+        transition: 'background 0.15s ease, color 0.15s ease',
+        whiteSpace: 'nowrap',
       }}
     >
-      <span style={{ fontSize: '14px' }}>{icon}</span>
+      {icon}
       {label}
     </button>
-  )
-}
-
-function SearchIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-      stroke="#737373" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="11" cy="11" r="8"/>
-      <path d="m21 21-4.35-4.35"/>
-    </svg>
   )
 }

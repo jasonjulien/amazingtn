@@ -3,7 +3,6 @@ import HeroSection from '@/components/home/HeroSection'
 import CategorySection from '@/components/home/CategorySection'
 import RegionSection from '@/components/home/RegionSection'
 import CitiesSection from '@/components/home/CitiesSection'
-import NewsletterSection from '@/components/home/NewsletterSection'
 
 export default function HomePage() {
   return (
@@ -13,7 +12,6 @@ export default function HomePage() {
       <CategorySection />
       <RegionSection />
       <CitiesSection />
-      <NewsletterSection />
     </div>
   )
 }

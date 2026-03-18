@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import FilterBar, { Region } from '@/components/FilterBar'
 import DestinationCard, { Category } from '@/components/DestinationCard'
-import Header from '@/components/Header'
+import HeaderWrapper from '@/components/HeaderWrapper'
 import { destinations as allDestinations } from '@/components/destinations-data'
 
 export default function ExplorePage() {
@@ -23,22 +23,33 @@ export default function ExplorePage() {
   return (
     <div style={{ background: '#fafaf9', minHeight: '100vh' }}>
 
-      {/* Header */}
-      <Header variant="white" />
+      <HeaderWrapper variant="transparent" />
 
-      {/* Hero */}
+      {/* ── Hero ── */}
       <div style={{
-        position:       'relative',
-        height:         '320px',
-        overflow:       'hidden',
-        background:     '#0f172a',
+        position:   'relative',
+        height:     '320px',
+        overflow:   'hidden',
+        background: '#0f172a',
         display:        'flex',
         alignItems:     'center',
         justifyContent: 'center',
         paddingTop:     '100px',
       }}>
-        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0f2027 100%)' }} />
-        <div style={{ position: 'absolute', inset: 0, background: 'rgba(15,23,42,0.6)' }} />
+        {/* Background photo */}
+        <img
+          src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1600&q=85"
+          alt="Blue Ridge Mountains Tennessee"
+          style={{
+            position:       'absolute',
+            inset:          0,
+            width:          '100%',
+            height:         '100%',
+            objectFit:      'cover',
+            objectPosition: 'center 60%',
+          }}
+        />
+        <div style={{ position: 'absolute', inset: 0, background: 'rgba(15,23,42,0.55)' }} />
         <div style={{ position: 'relative', textAlign: 'center' }}>
           <h1 style={{ fontSize: '46px', fontWeight: 400, color: '#fff', letterSpacing: '-0.5px', marginBottom: '12px' }}>
             Explore <strong>Tennessee</strong>

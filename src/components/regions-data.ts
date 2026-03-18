@@ -3,6 +3,12 @@ import { cities } from './cities-data'
 const cityImage = (slug: string) =>
   cities.find(c => c.slug === slug)?.heroImage ?? ''
 
+export interface RegionHighlight {
+  icon:        'nature' | 'music' | 'history' | 'adventure' | 'food' | 'family'
+  label:       string
+  description: string
+}
+
 export interface RegionData {
   slug:        string
   label:       string
@@ -11,7 +17,7 @@ export interface RegionData {
   heroImage:   string
   accentColor: string
   gradient:    string
-  highlights:  string[]
+  highlights:  RegionHighlight[]
   cities:      { name: string; tagline: string; image: string; href: string }[]
   attractions: { name: string; href: string }[]
 }
@@ -25,12 +31,17 @@ export const regionsData: Record<string, RegionData> = {
     heroImage:   'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1600&q=85',
     accentColor: '#059669',
     gradient:    'linear-gradient(135deg, #059669, #15803d)',
-    highlights:  ['Great Smoky Mountains', 'Dollywood', 'Ruby Falls', 'Cades Cove'],
+    highlights: [
+      { icon: 'adventure', label: 'Great Smoky Mountains',  description: 'Over 800 miles of trails and stunning vistas in America\'s most visited national park.' },
+      { icon: 'nature',    label: 'Pristine Wilderness',    description: '56 state parks and countless natural areas perfect for hiking, camping, and kayaking.' },
+      { icon: 'music',     label: 'Appalachian Culture',    description: 'A living heritage of mountain music, craftsmanship, and Appalachian traditions.' },
+      { icon: 'history',   label: 'Charming Towns',         description: 'From Gatlinburg\'s resort village charm to the historic streets of Jonesborough.' },
+    ],
     cities: [
-      { name: 'Knoxville',   tagline: 'Gateway to the Smokies',  image: cityImage('knoxville'),    href: '/cities/knoxville' },
-      { name: 'Gatlinburg',  tagline: 'Mountain resort village',  image: cityImage('gatlinburg'),   href: '/cities/gatlinburg' },
-      { name: 'Pigeon Forge',tagline: 'Home of Dollywood',        image: cityImage('pigeon-forge'), href: '/cities/pigeon-forge' },
-      { name: 'Chattanooga', tagline: 'Scenic City',              image: cityImage('chattanooga'),  href: '/cities/chattanooga' },
+      { name: 'Knoxville',    tagline: 'Gateway to the Smokies', image: cityImage('knoxville'),    href: '/cities/knoxville' },
+      { name: 'Gatlinburg',   tagline: 'Mountain resort village', image: cityImage('gatlinburg'),   href: '/cities/gatlinburg' },
+      { name: 'Pigeon Forge', tagline: 'Home of Dollywood',       image: cityImage('pigeon-forge'), href: '/cities/pigeon-forge' },
+      { name: 'Chattanooga',  tagline: 'Scenic City',             image: cityImage('chattanooga'),  href: '/cities/chattanooga' },
     ],
     attractions: [
       { name: 'Great Smoky Mountains National Park', href: '/destinations/great-smoky-mountains' },
@@ -50,17 +61,22 @@ export const regionsData: Record<string, RegionData> = {
     heroImage:   'https://images.unsplash.com/photo-1545093149-618ce3bcf49d?w=1600&q=85',
     accentColor: '#d97706',
     gradient:    'linear-gradient(135deg, #d97706, #c2410c)',
-    highlights:  ['Grand Ole Opry', 'Jack Daniels Distillery', 'The Parthenon', 'Franklin'],
+    highlights: [
+      { icon: 'music',   label: 'Grand Ole Opry',         description: 'The longest-running radio broadcast in history and the heart of country music.' },
+      { icon: 'food',    label: 'World-Class Dining',      description: 'From hot chicken to James Beard–recognized restaurants, Nashville\'s food scene thrills.' },
+      { icon: 'history', label: 'Rich Civil War History',  description: 'Battlefields, antebellum mansions, and museums that tell America\'s defining story.' },
+      { icon: 'nature',  label: 'Rolling Hill Country',   description: 'Scenic parkways, waterfalls, and peaceful countryside just beyond the city limits.' },
+    ],
     cities: [
-      { name: 'Nashville',    tagline: 'Music City',         image: cityImage('nashville'),     href: '/cities/nashville' },
-      { name: 'Franklin',     tagline: 'Coolest Small Town', image: cityImage('franklin'),      href: '/cities/franklin' },
-      { name: 'Murfreesboro', tagline: 'Geographic Center',  image: cityImage('murfreesboro'),  href: '/cities/murfreesboro' },
-      { name: 'Lynchburg',    tagline: 'Whiskey Country',    image: cityImage('lynchburg'),     href: '/cities/lynchburg' },
+      { name: 'Nashville',    tagline: 'Music City',         image: cityImage('nashville'),    href: '/cities/nashville' },
+      { name: 'Franklin',     tagline: 'Coolest Small Town', image: cityImage('franklin'),     href: '/cities/franklin' },
+      { name: 'Murfreesboro', tagline: 'Geographic Center',  image: cityImage('murfreesboro'), href: '/cities/murfreesboro' },
+      { name: 'Lynchburg',    tagline: 'Whiskey Country',    image: cityImage('lynchburg'),    href: '/cities/lynchburg' },
     ],
     attractions: [
-      { name: 'Grand Ole Opry',          href: '/destinations/grand-ole-opry' },
-      { name: 'Jack Daniels Distillery', href: '/destinations/jack-daniels-distillery' },
-      { name: 'The Parthenon',           href: '/destinations/parthenon' },
+      { name: 'Grand Ole Opry',             href: '/destinations/grand-ole-opry' },
+      { name: 'Jack Daniels Distillery',    href: '/destinations/jack-daniels-distillery' },
+      { name: 'The Parthenon',              href: '/destinations/parthenon' },
       { name: 'Country Music Hall of Fame', href: '/destinations/country-music-hall-of-fame' },
       { name: 'Belle Meade Historic Site',  href: '/destinations/belle-meade' },
       { name: 'Natchez Trace Parkway',      href: '/destinations/natchez-trace' },
@@ -75,12 +91,17 @@ export const regionsData: Record<string, RegionData> = {
     heroImage:   'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=1600&q=85',
     accentColor: '#7c3aed',
     gradient:    'linear-gradient(135deg, #7c3aed, #1d4ed8)',
-    highlights:  ['Beale Street', 'Graceland', 'National Civil Rights Museum', 'Mud Island'],
+    highlights: [
+      { icon: 'music',   label: 'Birthplace of the Blues', description: 'Beale Street, Sun Studio, and Stax Records — where rock and soul were born.' },
+      { icon: 'history', label: 'Civil Rights Legacy',     description: 'Home to the National Civil Rights Museum, built at the site of Dr. King\'s assassination.' },
+      { icon: 'food',    label: 'Memphis BBQ',             description: 'World-famous dry-rub ribs and slow-smoked traditions that put Memphis on the culinary map.' },
+      { icon: 'nature',  label: 'Mississippi River',       description: 'Mud Island, riverside parks, and the mighty Mississippi shaping West Tennessee\'s landscape.' },
+    ],
     cities: [
-      { name: 'Memphis',  tagline: 'Home of the Blues',      image: cityImage('memphis'),  href: '/cities/memphis' },
-      { name: 'Jackson',  tagline: 'Hub City',               image: cityImage('jackson'),  href: '/cities/jackson' },
-      { name: 'Dyersburg',tagline: 'Gateway to the Delta',   image: cityImage('dyersburg'),href: '/cities/dyersburg' },
-      { name: 'Bolivar',  tagline: 'Historic Hardeman County',image: cityImage('bolivar'), href: '/cities/bolivar' },
+      { name: 'Memphis',   tagline: 'Home of the Blues',        image: cityImage('memphis'),   href: '/cities/memphis' },
+      { name: 'Jackson',   tagline: 'Hub City',                 image: cityImage('jackson'),   href: '/cities/jackson' },
+      { name: 'Dyersburg', tagline: 'Gateway to the Delta',     image: cityImage('dyersburg'), href: '/cities/dyersburg' },
+      { name: 'Bolivar',   tagline: 'Historic Hardeman County', image: cityImage('bolivar'),   href: '/cities/bolivar' },
     ],
     attractions: [
       { name: 'Beale Street',                 href: '/destinations/beale-street' },

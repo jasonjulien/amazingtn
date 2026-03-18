@@ -2,8 +2,8 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import Header from '@/components/Header'
-import { cities, citiesByRegion } from '@/components/cities-data'
+import HeaderWrapper from '@/components/HeaderWrapper'
+import { cities, citiesByRegion, CityData } from '@/components/cities-data'
 
 type RegionFilter = 'all' | 'east' | 'middle' | 'west'
 
@@ -22,7 +22,7 @@ export default function CitiesPage() {
 
   return (
     <div style={{ background: '#fafaf9', minHeight: '100vh' }}>
-      <Header variant="white" />
+      <HeaderWrapper variant="transparent" />
 
       {/* ── Hero ── */}
       <div style={{
@@ -35,8 +35,20 @@ export default function CitiesPage() {
         justifyContent: 'center',
         paddingTop:     '100px',
       }}>
-        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0f2027 100%)' }} />
-        <div style={{ position: 'absolute', inset: 0, background: 'rgba(15,23,42,0.5)' }} />
+        {/* Background photo */}
+        <img
+          src="https://images.unsplash.com/photo-1715014258786-998a463ad77c?w=1600&q=85"
+          alt="Nashville sunset panorama"
+          style={{
+            position:       'absolute',
+            inset:          0,
+            width:          '100%',
+            height:         '100%',
+            objectFit:      'cover',
+            objectPosition: 'center 40%',
+          }}
+        />
+        <div style={{ position: 'absolute', inset: 0, background: 'rgba(15,23,42,0.55)' }} />
         <div style={{ position: 'relative', textAlign: 'center' }}>
           <p style={{ fontSize: '14px', color: '#fbbf24', textTransform: 'uppercase', letterSpacing: '4.2px', marginBottom: '12px' }}>
             Urban Adventures
@@ -60,11 +72,11 @@ export default function CitiesPage() {
         zIndex:       90,
       }}>
         <div style={{
-          maxWidth: '1440px',
-          margin:   '0 auto',
-          padding:  '16px 48px',
-          display:  'flex',
-          gap:      '8px',
+          maxWidth:   '1440px',
+          margin:     '0 auto',
+          padding:    '16px 48px',
+          display:    'flex',
+          gap:        '8px',
           alignItems: 'center',
         }}>
           <span style={{ fontSize: '13px', color: '#64748b', marginRight: '8px' }}>Filter by region:</span>
@@ -86,7 +98,6 @@ export default function CitiesPage() {
       {/* ── Cities grid ── */}
       <div style={{ maxWidth: '1440px', margin: '0 auto', padding: '48px 48px 80px' }}>
         {activeRegion === 'all' ? (
-          /* Grouped by region */
           <>
             {(['east', 'middle', 'west'] as const).map(region => (
               <RegionGroup
@@ -98,7 +109,6 @@ export default function CitiesPage() {
             ))}
           </>
         ) : (
-          /* Filtered grid */
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '24px' }}>
             {filtered.map(city => (
               <CityCard key={city.slug} city={city} />
@@ -114,12 +124,11 @@ export default function CitiesPage() {
 /* ─── Region Group ───────────────────────────── */
 function RegionGroup({ region, cities, config }: {
   region: 'east' | 'middle' | 'west'
-  cities: typeof import('@/components/cities-data').cities
+  cities: CityData[]
   config: { label: string; color: string; gradient: string }
 }) {
   return (
     <div style={{ marginBottom: '64px' }}>
-      {/* Region header */}
       <div style={{
         display:        'flex',
         alignItems:     'center',
@@ -127,33 +136,22 @@ function RegionGroup({ region, cities, config }: {
         marginBottom:   '24px',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <div style={{
-            width:        '4px',
-            height:       '32px',
-            borderRadius: '2px',
-            background:   config.gradient,
-          }} />
+          <div style={{ width: '4px', height: '32px', borderRadius: '2px', background: config.gradient }} />
           <h2 style={{ fontSize: '24px', fontWeight: 700, color: '#1e293b' }}>{config.label}</h2>
         </div>
-        <Link href={`/regions/${region}`} style={{
-          fontSize: '13px', color: config.color, fontWeight: 500,
-        }}>
+        <Link href={`/regions/${region}`} style={{ fontSize: '13px', color: config.color, fontWeight: 500 }}>
           Explore {config.label} →
         </Link>
       </div>
-
-      {/* City cards */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '24px' }}>
-        {cities.map(city => (
-          <CityCard key={city.slug} city={city} />
-        ))}
+        {cities.map(city => <CityCard key={city.slug} city={city} />)}
       </div>
     </div>
   )
 }
 
 /* ─── City Card ──────────────────────────────── */
-function CityCard({ city }: { city: typeof import('@/components/cities-data').cities[0] }) {
+function CityCard({ city }: { city: CityData }) {
   const [hovered, setHovered] = useState(false)
   const config = regionConfig[city.region]
 
@@ -172,66 +170,37 @@ function CityCard({ city }: { city: typeof import('@/components/cities-data').ci
         transition:   'box-shadow 0.2s ease, transform 0.2s ease',
       }}
     >
-      {/* Image */}
       <div style={{ position: 'relative', height: '200px', overflow: 'hidden', background: '#1e293b' }}>
         <img
           src={city.heroImage}
           alt={city.name}
           style={{
-            position:   'absolute',
-            inset:      0,
-            width:      '100%',
-            height:     '100%',
-            objectFit:  'cover',
-            transform:  hovered ? 'scale(1.04)' : 'scale(1)',
-            transition: 'transform 0.4s ease',
+            position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover',
+            transform: hovered ? 'scale(1.04)' : 'scale(1)', transition: 'transform 0.4s ease',
           }}
         />
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(15,23,42,0.6), rgba(15,23,42,0))' }} />
-        {/* Region badge */}
         <div style={{
-          position:     'absolute',
-          top:          '16px',
-          left:         '16px',
-          background:   config.color,
-          color:        '#fff',
-          fontSize:     '11px',
-          fontWeight:   700,
-          padding:      '4px 10px',
-          borderRadius: '6px',
-          boxShadow:    '0 1px 3px rgba(0,0,0,.15)',
+          position: 'absolute', top: '16px', left: '16px',
+          background: config.color, color: '#fff',
+          fontSize: '11px', fontWeight: 700, padding: '4px 10px', borderRadius: '6px',
+          boxShadow: '0 1px 3px rgba(0,0,0,.15)',
         }}>
           {config.label}
         </div>
       </div>
-
-      {/* Body */}
       <div style={{ padding: '20px 24px' }}>
         <h3 style={{ fontSize: '19.5px', fontWeight: 700, color: '#1e293b', marginBottom: '4px' }}>{city.name}</h3>
         <p style={{ fontSize: '13px', color: '#d97706', fontWeight: 500, marginBottom: '10px' }}>{city.tagline}</p>
         <p style={{
-          fontSize:        '13px',
-          color:           '#475569',
-          lineHeight:      1.55,
-          marginBottom:    '16px',
-          display:         '-webkit-box',
-          WebkitLineClamp: 2,
-          WebkitBoxOrient: 'vertical',
-          overflow:        'hidden',
+          fontSize: '13px', color: '#475569', lineHeight: 1.55, marginBottom: '16px',
+          display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden',
         }}>
           {city.description}
         </p>
-
-        {/* Highlights */}
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
           {city.highlights.slice(0, 3).map(h => (
-            <span key={h} style={{
-              fontSize:     '11px',
-              color:        '#475569',
-              background:   '#f1f5f9',
-              padding:      '3px 8px',
-              borderRadius: '4px',
-            }}>
+            <span key={h} style={{ fontSize: '11px', color: '#475569', background: '#f1f5f9', padding: '3px 8px', borderRadius: '4px' }}>
               {h}
             </span>
           ))}
@@ -243,10 +212,7 @@ function CityCard({ city }: { city: typeof import('@/components/cities-data').ci
 
 /* ─── Region Pill ────────────────────────────── */
 function RegionPill({ label, active, color, onClick }: {
-  label:   string
-  active:  boolean
-  color:   string
-  onClick: () => void
+  label: string; active: boolean; color: string; onClick: () => void
 }) {
   const [hovered, setHovered] = useState(false)
   return (
@@ -255,19 +221,14 @@ function RegionPill({ label, active, color, onClick }: {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
-        height:       '32px',
-        padding:      '0 16px',
-        borderRadius: '9999px',
-        fontSize:     '12px',
-        fontWeight:   active ? 600 : 400,
-        border:       active ? 'none' : '1px solid #e5e5e5',
-        background:   active ? color : hovered ? '#f9fafb' : '#fff',
-        color:        active ? '#fff' : '#0a0a0a',
-        boxShadow:    active ? '0 1px 3px rgba(0,0,0,.1)' : '0 1px 2px rgba(0,0,0,.05)',
-        cursor:       'pointer',
-        fontFamily:   'inherit',
-        transition:   'all 0.15s ease',
-        whiteSpace:   'nowrap',
+        height: '32px', padding: '0 16px', borderRadius: '9999px',
+        fontSize: '12px', fontWeight: active ? 600 : 400,
+        border: active ? 'none' : '1px solid #e5e5e5',
+        background: active ? color : hovered ? '#f9fafb' : '#fff',
+        color: active ? '#fff' : '#0a0a0a',
+        boxShadow: active ? '0 1px 3px rgba(0,0,0,.1)' : '0 1px 2px rgba(0,0,0,.05)',
+        cursor: 'pointer', fontFamily: 'inherit',
+        transition: 'all 0.15s ease', whiteSpace: 'nowrap',
       }}
     >
       {label}
