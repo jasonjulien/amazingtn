@@ -11,11 +11,12 @@ interface HeaderProps {
 }
 
 const navLinks = [
-  { label: 'Home',      href: '/' },
-  { label: 'Explore',   href: '/explore' },
-  { label: 'Regions',   href: '/regions' },
-  { label: 'Cities',    href: '/cities' },
-  { label: 'Plan Trip', href: '/itinerary' },
+  { label: 'Home',        href: '/' },
+  { label: 'Explore',     href: '/explore' },
+  { label: 'Regions',     href: '/regions' },
+  { label: 'Cities',      href: '/cities' },
+  { label: 'Restaurants', href: '/restaurants' },
+  { label: 'Plan Trip',   href: '/itinerary' },
 ]
 
 export default function Header({ variant = 'white' }: HeaderProps) {

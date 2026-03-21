@@ -940,14 +940,21 @@ export interface Restaurant {
         | 'american'
         | 'bbq'
         | 'southern'
+        | 'hot-chicken'
         | 'italian'
         | 'mexican'
         | 'seafood'
         | 'asian'
         | 'french'
         | 'mediterranean'
+        | 'steakhouse'
+        | 'breakfast-brunch'
+        | 'burgers-sandwiches'
+        | 'pizza'
+        | 'vegetarian-vegan'
+        | 'bar-gastropub'
         | 'other'
-      )
+      )[]
     | null;
   priceRange?: ('$' | '$$' | '$$$' | '$$$$') | null;
   shortDescription?: string | null;

@@ -15,6 +15,8 @@ export default async function HomePage() {
     depth: 1,
   })
 
+  console.log('restaurant sample:', JSON.stringify(Object.keys(docs[0] ?? {})))
+   
   const cities = docs.map(c => ({
     slug:        c.slug,
     name:        c.name,
