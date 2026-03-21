@@ -3,20 +3,13 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import Header from '@/components/Header'
-import { RegionData } from '@/components/regions-data'
-import { destinations } from '@/components/destinations-data'
+import type { RegionData } from '@/lib/buildRegionsData'
 import DestinationCard from '@/components/DestinationCard'
 
 const regionOrder = ['east', 'middle', 'west']
 
-export default function RegionDetailClient({
-  region,
-  regionSlug,
-}: {
-  region: RegionData
-  regionSlug: string
-}) {
-  const regionDestinations = destinations.filter(d => d.region === regionSlug as 'east' | 'middle' | 'west')
+export default function RegionDetailClient({ region, regionSlug }: { region: RegionData; regionSlug: string }) {
+ const regionDestinations = region.destinations
   const [hoveredAttraction, setHoveredAttraction] = useState<string | null>(null)
 
   return (

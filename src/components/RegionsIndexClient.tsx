@@ -3,8 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import HeaderWrapper from '@/components/HeaderWrapper'
-import { regionsData, RegionHighlight } from '@/components/regions-data'
-import { destinations } from '@/components/destinations-data'
+import type { RegionData } from '@/lib/buildRegionsData'
 import DestinationCard from '@/components/DestinationCard'
 import { MusicIcon, NatureIcon, HistoryIcon, AdventureIcon, FoodIcon, FamilyIcon } from '@/components/Icons'
 
@@ -26,10 +25,10 @@ const highlightIconMap: Record<RegionHighlight['icon'], React.ReactNode> = {
   family:    <FamilyIcon size={24} strokeWidth={1.75} />,
 }
 
-export default function RegionsIndexClient() {
+export default function RegionsIndexClient({ regionsData }: { regionsData: Record<string, RegionData> }) {
   const [active, setActive] = useState<RegionSlug>('east')
   const region = regionsData[active]
-  const regionDestinations = destinations.filter(d => d.region === active)
+  const regionDestinations = region.destinations
   const [hoveredAttraction, setHoveredAttraction] = useState<string | null>(null)
 
   return (

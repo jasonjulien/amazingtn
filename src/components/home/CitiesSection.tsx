@@ -2,12 +2,25 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
-import { cities } from '@/components/cities-data'
 
-const nashville   = cities.find(c => c.slug === 'nashville')!
-const smallCities = cities.filter(c => ['memphis','gatlinburg','chattanooga','knoxville'].includes(c.slug))
+type CityData = {
+  slug:        string
+  name:        string
+  tagline:     string
+  region:      string
+  regionLabel: string
+  population:  string
+  description: string
+  heroImage:   string
+  highlights:  string[]
+}
 
-export default function CitiesSection() {
+export default function CitiesSection({ cities }: { cities: CityData[] }) {
+  const nashville   = cities.find(c => c.slug === 'nashville')
+  const smallCities = cities.filter(c => ['memphis', 'gatlinburg', 'chattanooga', 'knoxville'].includes(c.slug))
+
+  if (!nashville) return null
+
   return (
     <section style={{ background: '#fff', padding: '96px 0' }}>
       <div style={{ maxWidth: '1440px', margin: '0 auto', padding: '0 48px' }}>
@@ -42,7 +55,7 @@ export default function CitiesSection() {
   )
 }
 
-function CityCardLarge({ city }: { city: typeof cities[0] }) {
+function CityCardLarge({ city }: { city: CityData }) {
   const [hovered, setHovered] = useState(false)
   return (
     <Link href={`/cities/${city.slug}`}
@@ -55,7 +68,10 @@ function CityCardLarge({ city }: { city: typeof cities[0] }) {
         boxShadow: hovered ? '0 16px 40px rgba(0,0,0,.15)' : 'none',
         transition: 'transform 0.2s ease, box-shadow 0.2s ease',
       }}>
-      <img src={city.heroImage} alt={city.name} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', transform: hovered ? 'scale(1.03)' : 'scale(1)', transition: 'transform 0.4s ease' }} />
+      <img src={city.heroImage} alt={city.name} style={{
+        position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover',
+        transform: hovered ? 'scale(1.03)' : 'scale(1)', transition: 'transform 0.4s ease',
+      }} />
       <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, #0f172a 0%, rgba(15,23,42,0.3) 50%, rgba(15,23,42,0) 100%)' }} />
       <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '40px' }}>
         <div style={{ fontSize: '13.2px', color: '#fbbf24', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '8px' }}>{city.regionLabel}</div>
@@ -67,7 +83,7 @@ function CityCardLarge({ city }: { city: typeof cities[0] }) {
   )
 }
 
-function CityCardSmall({ city }: { city: typeof cities[0] }) {
+function CityCardSmall({ city }: { city: CityData }) {
   const [hovered, setHovered] = useState(false)
   return (
     <Link href={`/cities/${city.slug}`}
@@ -80,7 +96,10 @@ function CityCardSmall({ city }: { city: typeof cities[0] }) {
         boxShadow: hovered ? '0 12px 28px rgba(0,0,0,.15)' : 'none',
         transition: 'transform 0.2s ease, box-shadow 0.2s ease',
       }}>
-      <img src={city.heroImage} alt={city.name} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', transform: hovered ? 'scale(1.03)' : 'scale(1)', transition: 'transform 0.4s ease' }} />
+      <img src={city.heroImage} alt={city.name} style={{
+        position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover',
+        transform: hovered ? 'scale(1.03)' : 'scale(1)', transition: 'transform 0.4s ease',
+      }} />
       <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, #0f172a, rgba(15,23,42,0))' }} />
       <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '24px' }}>
         <div style={{ fontSize: '11px', color: '#fbbf24', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px' }}>{city.tagline}</div>
