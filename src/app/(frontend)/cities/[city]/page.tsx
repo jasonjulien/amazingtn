@@ -6,9 +6,10 @@ import CityDetailClient from './CityDetailClient'
 export default async function CityDetailPage({ params }: { params: { city: string } }) {
   const payload = await getPayload({ config: await configPromise })
 
-  const [citiesRes, destinationsRes] = await Promise.all([
+  const [citiesRes, destinationsRes, restaurantsRes] = await Promise.all([
     payload.find({ collection: 'cities', limit: 100, depth: 1 }),
     payload.find({ collection: 'destinations', limit: 200, depth: 0 }),
+    payload.find({ collection: 'restaurants', limit: 200, depth: 0 }),
   ])
 
   const city = citiesRes.docs.find(c => c.slug === params.city)
@@ -52,11 +53,27 @@ export default async function CityDetailPage({ params }: { params: { city: strin
       heroImage:        d.heroImage ?? '',
     }))
 
+  const cityRestaurants = restaurantsRes.docs
+    .filter(r => r.city?.toLowerCase() === city.name.toLowerCase())
+    .map(r => ({
+      slug:             r.slug,
+      name:             r.name,
+      city:             r.city ?? '',
+      cuisine:          Array.isArray(r.cuisine) ? r.cuisine : r.cuisine ? [r.cuisine] : [],
+      priceRange:       r.priceRange ?? '',
+      shortDescription: r.shortDescription ?? '',
+      heroImage:        r.heroImage ?? '',
+      featured:         r.featured ?? false,
+      featuredTier:     r.featuredTier ?? 'free',
+      website:          r.website ?? '',
+    }))
+
   return (
     <CityDetailClient
       city={cityData}
       nearbyCities={nearbyCities}
       cityDestinations={cityDestinations}
+      cityRestaurants={cityRestaurants}
     />
   )
 }

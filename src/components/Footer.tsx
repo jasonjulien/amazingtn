@@ -256,6 +256,7 @@ export default function Footer() {
           }}>
             <span>© {new Date().getFullYear()} AmazingTN. All rights reserved.</span>
             <div style={{ display: 'flex', gap: '32px' }}>
+              <FooterLink href="/advertise">Advertise</FooterLink>
               <FooterLink href="/privacy">Privacy Policy</FooterLink>
               <FooterLink href="/terms">Terms of Service</FooterLink>
               <FooterLink href="/accessibility">Accessibility</FooterLink>

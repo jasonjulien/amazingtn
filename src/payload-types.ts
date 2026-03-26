@@ -76,6 +76,7 @@ export interface Config {
     cities: City;
     destinations: Destination;
     restaurants: Restaurant;
+    sponsors: Sponsor;
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
@@ -102,6 +103,7 @@ export interface Config {
     cities: CitiesSelect<false> | CitiesSelect<true>;
     destinations: DestinationsSelect<false> | DestinationsSelect<true>;
     restaurants: RestaurantsSelect<false> | RestaurantsSelect<true>;
+    sponsors: SponsorsSelect<false> | SponsorsSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
@@ -988,6 +990,33 @@ export interface Restaurant {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sponsors".
+ */
+export interface Sponsor {
+  id: number;
+  businessName: string;
+  contactName: string;
+  contactEmail: string;
+  contactPhone?: string | null;
+  website?: string | null;
+  tier: 'basic' | 'featured' | 'premier';
+  linkedType: 'restaurant' | 'destination' | 'event' | 'city';
+  linkedRestaurant?: (number | null) | Restaurant;
+  linkedDestination?: (number | null) | Destination;
+  status: 'pending' | 'active' | 'expired' | 'cancelled';
+  startsAt?: string | null;
+  expiresAt?: string | null;
+  stripeCustomerId?: string | null;
+  stripeSubscriptionId?: string | null;
+  stripeCheckoutSessionId?: string | null;
+  featuredImage?: (number | null) | Media;
+  tagline?: string | null;
+  notes?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects".
  */
 export interface Redirect {
@@ -1211,6 +1240,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'restaurants';
         value: number | Restaurant;
+      } | null)
+    | ({
+        relationTo: 'sponsors';
+        value: number | Sponsor;
       } | null)
     | ({
         relationTo: 'redirects';
@@ -1680,6 +1713,32 @@ export interface RestaurantsSelect<T extends boolean = true> {
   featuredTier?: T;
   website?: T;
   phone?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sponsors_select".
+ */
+export interface SponsorsSelect<T extends boolean = true> {
+  businessName?: T;
+  contactName?: T;
+  contactEmail?: T;
+  contactPhone?: T;
+  website?: T;
+  tier?: T;
+  linkedType?: T;
+  linkedRestaurant?: T;
+  linkedDestination?: T;
+  status?: T;
+  startsAt?: T;
+  expiresAt?: T;
+  stripeCustomerId?: T;
+  stripeSubscriptionId?: T;
+  stripeCheckoutSessionId?: T;
+  featuredImage?: T;
+  tagline?: T;
+  notes?: T;
   updatedAt?: T;
   createdAt?: T;
 }

@@ -25,16 +25,57 @@ type DestinationData = {
   featured: boolean; heroImage: string
 }
 
+type RestaurantData = {
+  slug:             string
+  name:             string
+  city:             string
+  cuisine:          string[]
+  priceRange:       string
+  shortDescription: string
+  heroImage:        string
+  featured:         boolean
+  featuredTier:     string
+  website:          string
+}
+
 const regionConfig = {
   east:   { label: 'East Tennessee',   color: '#059669', gradient: 'linear-gradient(135deg, #059669, #15803d)' },
   middle: { label: 'Middle Tennessee', color: '#d97706', gradient: 'linear-gradient(135deg, #d97706, #c2410c)' },
   west:   { label: 'West Tennessee',   color: '#7c3aed', gradient: 'linear-gradient(135deg, #7c3aed, #1d4ed8)' },
 }
 
-export default function CityDetailClient({ city, nearbyCities, cityDestinations }: {
+const cuisineLabels: Record<string, string> = {
+  american:            'American',
+  bbq:                 'BBQ',
+  southern:            'Southern',
+  'hot-chicken':       'Hot Chicken',
+  italian:             'Italian',
+  mexican:             'Mexican',
+  seafood:             'Seafood',
+  asian:               'Asian',
+  french:              'French',
+  mediterranean:       'Mediterranean',
+  steakhouse:          'Steakhouse',
+  'breakfast-brunch':  'Breakfast & Brunch',
+  'burgers-sandwiches':'Burgers & Sandwiches',
+  pizza:               'Pizza',
+  'vegetarian-vegan':  'Vegetarian/Vegan',
+  'bar-gastropub':     'Bar & Gastropub',
+  other:               'Other',
+}
+
+const priceColors: Record<string, string> = {
+  '$':    '#059669',
+  '$$':   '#d97706',
+  '$$$':  '#dc2626',
+  '$$$$': '#7c3aed',
+}
+
+export default function CityDetailClient({ city, nearbyCities, cityDestinations, cityRestaurants }: {
   city:             CityData
   nearbyCities:     NearbyCity[]
   cityDestinations: DestinationData[]
+  cityRestaurants:  RestaurantData[]
 }) {
   const regionCfg = regionConfig[city.region]
   const [hoveredHighlight, setHoveredHighlight] = useState<string | null>(null)
@@ -80,6 +121,9 @@ export default function CityDetailClient({ city, nearbyCities, cityDestinations 
           <StatItem label="Population" value={city.population} />
           <StatItem label="Region" value={regionCfg.label} />
           <StatItem label="Attractions" value={`${cityDestinations.length > 0 ? cityDestinations.length : city.highlights.length}+`} />
+          {cityRestaurants.length > 0 && (
+            <StatItem label="Restaurants" value={`${cityRestaurants.length}+`} />
+          )}
           <div style={{ marginLeft: 'auto' }}>
             <Link href={`/explore?region=${city.region}`} style={{
               display: 'inline-flex', alignItems: 'center', height: '36px', padding: '0 20px',
@@ -140,8 +184,36 @@ export default function CityDetailClient({ city, nearbyCities, cityDestinations 
         </div>
       )}
 
+      {/* ── Where to Eat ── */}
+      {cityRestaurants.length > 0 && (
+        <div style={{ background: '#fafaf9', padding: '64px 0' }}>
+          <div style={{ maxWidth: '1440px', margin: '0 auto', padding: '0 48px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '32px' }}>
+              <div>
+                <p style={{ fontSize: '14px', color: '#d97706', textTransform: 'uppercase', letterSpacing: '4.2px', marginBottom: '12px' }}>Where to Eat</p>
+                <h2 style={{ fontSize: '34px', fontWeight: 400, color: '#1e293b' }}>
+                  Restaurants in <strong>{city.name}</strong>
+                </h2>
+              </div>
+              <Link href={`/restaurants?region=${city.region}`} style={{
+                display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px',
+                color: '#475569', background: '#fff', border: '1px solid #e5e5e5',
+                padding: '8px 16px', borderRadius: '9999px', boxShadow: '0 1px 2px rgba(0,0,0,.05)',
+              }}>
+                View All Restaurants →
+              </Link>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '24px' }}>
+              {cityRestaurants.map(r => (
+                <RestaurantCard key={r.slug} restaurant={r} regionColor={regionCfg.color} />
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* ── Nearby cities ── */}
-      <div style={{ background: '#fafaf9', padding: '64px 0' }}>
+      <div style={{ background: '#fff', padding: '64px 0' }}>
         <div style={{ maxWidth: '1440px', margin: '0 auto', padding: '0 48px' }}>
           <h2 style={{ fontSize: '28px', fontWeight: 400, color: '#1e293b', marginBottom: '24px' }}>
             More Cities in <strong>{regionCfg.label}</strong>
@@ -192,6 +264,75 @@ export default function CityDetailClient({ city, nearbyCities, cityDestinations 
         </div>
       </div>
 
+    </div>
+  )
+}
+
+/* ─── Restaurant Card ─────────────────────────── */
+function RestaurantCard({ restaurant: r, regionColor }: { restaurant: RestaurantData; regionColor: string }) {
+  const [hovered, setHovered] = useState(false)
+
+  return (
+    <div
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        background: '#fff', borderRadius: '16px', overflow: 'hidden',
+        boxShadow: hovered ? '0 8px 24px rgba(0,0,0,.10)' : r.featuredTier !== 'free' ? '0 2px 8px rgba(245,158,11,.15)' : '0 1px 2px rgba(0,0,0,.05)',
+        border: r.featuredTier !== 'free' ? '1px solid #fde68a' : '1px solid transparent',
+        transform: hovered ? 'translateY(-3px)' : 'translateY(0)',
+        transition: 'all 0.2s ease',
+      }}
+    >
+      <div style={{ position: 'relative', height: '180px', overflow: 'hidden', background: '#1e293b' }}>
+        {r.heroImage ? (
+          <img src={r.heroImage} alt={r.name} style={{
+            position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover',
+            transform: hovered ? 'scale(1.04)' : 'scale(1)', transition: 'transform 0.4s ease',
+          }} />
+        ) : (
+          <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '40px' }}>🍽️</div>
+        )}
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(15,23,42,0.5), rgba(15,23,42,0))' }} />
+        {r.featuredTier !== 'free' && (
+          <div style={{ position: 'absolute', top: '12px', left: '12px', background: '#f59e0b', color: '#fff', fontSize: '10px', fontWeight: 700, padding: '3px 8px', borderRadius: '6px' }}>
+            FEATURED
+          </div>
+        )}
+        {r.priceRange && (
+          <div style={{
+            position: 'absolute', top: '12px', right: '12px',
+            background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)',
+            color: priceColors[r.priceRange] ?? '#fff',
+            fontSize: '12px', fontWeight: 700, padding: '3px 8px', borderRadius: '6px',
+          }}>
+            {r.priceRange}
+          </div>
+        )}
+      </div>
+      <div style={{ padding: '16px 20px' }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '8px' }}>
+          {r.cuisine.slice(0, 2).map(c => (
+            <span key={c} style={{ fontSize: '11px', color: '#475569', background: '#f1f5f9', padding: '2px 8px', borderRadius: '4px' }}>
+              {cuisineLabels[c] ?? c}
+            </span>
+          ))}
+        </div>
+        <h3 style={{ fontSize: '17px', fontWeight: 700, color: '#1e293b', marginBottom: '6px', lineHeight: 1.3 }}>{r.name}</h3>
+        <p style={{
+          fontSize: '13px', color: '#475569', lineHeight: 1.55, marginBottom: '12px',
+          display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden',
+        }}>
+          {r.shortDescription}
+        </p>
+        {r.website && (
+          <a href={r.website} target="_blank" rel="noopener noreferrer"
+            style={{ fontSize: '12px', color: '#d97706', fontWeight: 500 }}
+            onClick={e => e.stopPropagation()}>
+            Visit Site →
+          </a>
+        )}
+      </div>
     </div>
   )
 }

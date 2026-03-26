@@ -16,7 +16,7 @@ const navLinks = [
   { label: 'Regions',     href: '/regions' },
   { label: 'Cities',      href: '/cities' },
   { label: 'Restaurants', href: '/restaurants' },
-  { label: 'Plan Trip',   href: '/itinerary' },
+  { label: 'Advertise',   href: '/advertise' },
 ]
 
 export default function Header({ variant = 'white' }: HeaderProps) {
