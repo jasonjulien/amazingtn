@@ -25,7 +25,8 @@ export default function HeroSection() {
 
       {/* Background photo */}
       <img
-        src="https://images.unsplash.com/photo-1501854140801-50d01698950b?w=1600&q=85"
+        //src="https://images.unsplash.com/photo-1501854140801-50d01698950b?w=1600&q=85"
+        src="https://images.unsplash.com/photo-1596646060112-75af5c9c45da?q=80&w=1548"
         alt="Great Smoky Mountains sunset"
         style={{
           position:       'absolute',

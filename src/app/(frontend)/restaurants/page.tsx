@@ -26,16 +26,17 @@ export default async function RestaurantsPage() {
 
   const restaurants = restaurantDocs.map((r) => ({
     id:               String(r.id),
-    name:             r.name         ?? '',
-    slug:             r.slug         ?? '',
-    city:             r.city         ?? '',
-    cuisine:          (r.cuisine     ?? []) as string[],
-    priceRange:       r.priceRange   ?? '',
+    slug:             r.slug,
+    name:             r.name,
+    city:             r.city ?? '',
+    region:           typeof r.region === 'object' ? (r.region as any).slug : r.region ?? '',  // ← add this
+    cuisine:          Array.isArray(r.cuisine) ? r.cuisine : r.cuisine ? [r.cuisine] : [],
+    priceRange:       r.priceRange ?? '',
     shortDescription: r.shortDescription ?? '',
-    heroImage:        r.heroImage    ?? '',   // plain text URL
-    featured:         r.featured     ?? false,
+    heroImage:        r.heroImage ?? '',
+    featured:         r.featured ?? false,
     featuredTier:     r.featuredTier ?? 'free',
-  }))
+    }))
 
   // Sponsor map keyed by restaurant id (for paid featured badges via Sponsors collection)
   const sponsorMap: Record<string, { tier: string; tagline?: string; featuredImage?: string }> = {}

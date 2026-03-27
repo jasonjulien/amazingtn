@@ -13,17 +13,18 @@ interface RestaurantItem {
   name:             string
   slug:             string
   city:             string
-  cuisine:          string[]   // e.g. ['hot-chicken', 'southern']
+  region:           string
+  cuisine:          string[]
   priceRange:       string
   shortDescription: string
-  heroImage:        string     // plain URL string
+  heroImage:        string
   featured:         boolean
-  featuredTier:     string     // 'free' | 'featured' | 'premium'
+  featuredTier:     string
 }
 
 interface SponsorInfo {
-  tier:          string
-  tagline?:      string
+  tier:           string
+  tagline?:       string
   featuredImage?: string
 }
 
@@ -32,7 +33,7 @@ interface Props {
   sponsorMap:  Record<string, SponsorInfo>
 }
 
-// ─── Cuisine label map ────────────────────────────────────────────────────────
+// ─── Constants ────────────────────────────────────────────────────────────────
 
 const CUISINE_LABELS: Record<string, string> = {
   'american':           'American',
@@ -54,29 +55,25 @@ const CUISINE_LABELS: Record<string, string> = {
   'other':              'Other',
 }
 
-const CUISINE_OPTIONS = Object.keys(CUISINE_LABELS)
-
 const PRICE_OPTIONS = [
-  { value: '$',    label: '$ · Budget'       },
-  { value: '$$',   label: '$$ · Moderate'    },
-  { value: '$$$',  label: '$$$ · Upscale'    },
-  { value: '$$$$', label: '$$$$ · Fine Dining'},
+  { value: '$',    label: '$ · Budget'        },
+  { value: '$$',   label: '$$ · Moderate'     },
+  { value: '$$$',  label: '$$$ · Upscale'     },
+  { value: '$$$$', label: '$$$$ · Fine Dining' },
 ]
 
-// Sort order: paid sponsor tiers first, then featured checkbox, then free
 const TIER_ORDER: Record<string, number> = {
-  premier:  0,
-  featured: 1,
-  basic:    2,
-  premium:  3,  // featuredTier on the restaurant itself
-  free:     4,
+  premier:  0,  // sponsor tier
+  premium:  1,  // restaurant featuredTier
+  featured: 2,  // both sponsor and restaurant featuredTier
+  basic:    3,  // sponsor tier
+  free:     99, // no boost
 }
 
-const C = {
-  navy:    '#1a2e3b',
-  navyDark:'#162433',
-  teal:    '#4db896',
-  amber:   '#f5a623',
+const regionConfig = {
+  east:   { label: 'East Tennessee',   color: '#059669' },
+  middle: { label: 'Middle Tennessee', color: '#d97706' },
+  west:   { label: 'West Tennessee',   color: '#7c3aed' },
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -86,6 +83,7 @@ export default function RestaurantsClient({ restaurants, sponsorMap }: Props) {
   const [selectedCuisines, setSelectedCuisines] = useState<string[]>([])
   const [selectedPrice,    setSelectedPrice]    = useState('')
   const [showFeaturedOnly, setShowFeaturedOnly] = useState(false)
+  const [region,           setRegion]           = useState<'all' | 'east' | 'middle' | 'west'>('all')
 
   const toggleCuisine = useCallback((c: string) => {
     setSelectedCuisines(prev =>
@@ -93,48 +91,47 @@ export default function RestaurantsClient({ restaurants, sponsorMap }: Props) {
     )
   }, [])
 
-  // ── Filter ────────────────────────────────────────────────────────────────
-
   const filtered = restaurants.filter(r => {
     if (search) {
       const q = search.toLowerCase()
       if (!r.name.toLowerCase().includes(q) && !r.city.toLowerCase().includes(q)) return false
     }
+    if (region !== 'all' && r.region !== region) return false
     if (selectedCuisines.length && !selectedCuisines.some(c => r.cuisine.includes(c))) return false
     if (selectedPrice && r.priceRange !== selectedPrice) return false
     if (showFeaturedOnly && !sponsorMap[r.id] && !r.featured) return false
     return true
   })
 
-  // ── Sort: paid sponsors → featured checkbox → organic ────────────────────
-
+  // Sort: paid sponsors first (by tier), then featured restaurants, then free
   const sorted = [...filtered].sort((a, b) => {
     const sponsorA = sponsorMap[a.id]
     const sponsorB = sponsorMap[b.id]
 
-    // Paid sponsor tier (from Sponsors collection)
-    const oa = sponsorA ? (TIER_ORDER[sponsorA.tier] ?? 3) : 99
-    const ob = sponsorB ? (TIER_ORDER[sponsorB.tier] ?? 3) : 99
+    const scoreA = sponsorA
+      ? (TIER_ORDER[sponsorA.tier] ?? 3)
+      : a.featured
+        ? (TIER_ORDER[a.featuredTier] ?? 3)
+        : 99
 
-    if (oa !== ob) return oa - ob
+    const scoreB = sponsorB
+      ? (TIER_ORDER[sponsorB.tier] ?? 3)
+      : b.featured
+        ? (TIER_ORDER[b.featuredTier] ?? 3)
+        : 99
 
-    // Fallback: featured checkbox + featuredTier on the restaurant
-    const fa = a.featured ? (TIER_ORDER[a.featuredTier] ?? 3) : 99
-    const fb = b.featured ? (TIER_ORDER[b.featuredTier] ?? 3) : 99
-    return fa - fb
+    return scoreA - scoreB
   })
 
-  const featuredCount    = sorted.filter(r => sponsorMap[r.id] || r.featured).length
-  const hasActiveFilters = search || selectedCuisines.length || selectedPrice || showFeaturedOnly
+  const hasActiveFilters = !!(search || selectedCuisines.length || selectedPrice || showFeaturedOnly || region !== 'all')
 
   const clearFilters = () => {
     setSearch('')
     setSelectedCuisines([])
     setSelectedPrice('')
     setShowFeaturedOnly(false)
+    setRegion('all')
   }
-
-  // ── Badge helper ─────────────────────────────────────────────────────────
 
   function getBadgeTier(r: RestaurantItem): 'basic' | 'featured' | 'premier' | null {
     const s = sponsorMap[r.id]
@@ -144,270 +141,270 @@ export default function RestaurantsClient({ restaurants, sponsorMap }: Props) {
     return null
   }
 
-  // ── Render ────────────────────────────────────────────────────────────────
-
   return (
-    <div style={{ minHeight: '100vh', background: '#fff' }}>
+    <div style={{ minHeight: '100vh', background: '#fafaf9' }}>
       <HeaderWrapper variant="transparent" />
 
-      {/* ── Hero ──────────────────────────────────────────────────────────── */}
-      <section style={{
-        background: `linear-gradient(to bottom, rgba(0,0,0,0.45), ${C.navy}ee), url('/images/restaurants-hero.jpg') center/cover no-repeat`,
-        color: '#fff',
-        paddingTop: 160,
-        paddingBottom: 60,
-        paddingLeft: 24,
-        paddingRight: 24,
-        textAlign: 'center',
+      {/* ── Hero ── */}
+      <div style={{
+        position: 'relative', height: '320px', overflow: 'hidden',
+        background: '#0f172a', display: 'flex', alignItems: 'center',
+        justifyContent: 'center', paddingTop: '100px',
       }}>
-        <p style={{ color: C.teal, textTransform: 'uppercase', letterSpacing: '0.15em', fontSize: 11, fontWeight: 600, marginBottom: 10 }}>
-          Tennessee Dining
-        </p>
-        <h1 style={{ fontSize: 'clamp(26px, 5vw, 44px)', fontWeight: 700, lineHeight: 1.15, marginBottom: 14 }}>
-          Find the Best Restaurants in Tennessee
-        </h1>
-        <p style={{ color: '#cbd5e1', fontSize: 16, maxWidth: 500, margin: '0 auto 28px' }}>
-          From Nashville hot chicken to East Tennessee BBQ — discover where locals eat.
-        </p>
-        <div style={{ position: 'relative', maxWidth: 440, margin: '0 auto' }}>
-          <span style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', fontSize: 16 }}>🔍</span>
-          <input
-            type="text"
-            placeholder="Search by name or city…"
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            style={{
-              width: '100%', paddingLeft: 40, paddingRight: 16,
-              paddingTop: 12, paddingBottom: 12,
-              borderRadius: 12, border: 'none', fontSize: 14, color: '#111827',
-              outline: 'none', boxSizing: 'border-box',
-            }}
-          />
-        </div>
-      </section>
-
-      {/* ── Stats bar ─────────────────────────────────────────────────────── */}
-      <div style={{ background: C.navyDark, color: '#fff' }}>
-        <div style={{
-          maxWidth: 900, margin: '0 auto', padding: '16px 24px',
-          display: 'flex', justifyContent: 'center', gap: 48, flexWrap: 'wrap', textAlign: 'center',
-        }}>
-          {[
-            { stat: restaurants.length,         label: 'Restaurants' },
-            { stat: featuredCount,               label: 'Featured'    },
-            { stat: `${CUISINE_OPTIONS.length}+`,label: 'Cuisines'    },
-          ].map(({ stat, label }) => (
-            <div key={label}>
-              <div style={{ fontSize: 20, fontWeight: 700 }}>{stat}</div>
-              <div style={{ color: '#94a3b8', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em' }}>{label}</div>
-            </div>
-          ))}
+        <img
+          src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1600&q=85"
+          alt="Tennessee dining"
+          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 50%' }}
+        />
+        <div style={{ position: 'absolute', inset: 0, background: 'rgba(15,23,42,0.6)' }} />
+        <div style={{ position: 'relative', textAlign: 'center', padding: '0 24px' }}>
+          <p style={{ fontSize: '14px', color: '#fbbf24', textTransform: 'uppercase', letterSpacing: '4.2px', marginBottom: '12px' }}>
+            Where to Eat
+          </p>
+          <h1 style={{ fontSize: '46px', fontWeight: 400, color: '#fff', letterSpacing: '-0.5px', marginBottom: '12px' }}>
+            Tennessee <strong>Restaurants</strong>
+          </h1>
+          <p style={{ fontSize: '16.7px', color: 'rgba(255,255,255,0.8)', maxWidth: '500px', lineHeight: 1.65, margin: '0 auto' }}>
+            From legendary BBQ pits to Michelin-starred dining — discover the best places to eat across the Volunteer State
+          </p>
         </div>
       </div>
 
-      {/* ── Filters + grid ────────────────────────────────────────────────── */}
-      <div style={{ maxWidth: 1280, margin: '0 auto', padding: '32px 24px', display: 'flex', gap: 32, alignItems: 'flex-start' }}>
+      {/* ── Filter bar ── */}
+      <div style={{
+        background: '#fff', borderBottom: '1px solid #e5e5e5',
+        boxShadow: '0 1px 2px rgba(0,0,0,.05)', position: 'sticky', top: '100px', zIndex: 90,
+      }}>
+        <div style={{ maxWidth: '1440px', margin: '0 auto', padding: '16px 48px', display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
 
-        {/* Sidebar — hidden on mobile via inline style + injected media query */}
-        <style>{`@media(min-width:768px){.rest-sidebar{display:block!important}}`}</style>
-        <aside className="rest-sidebar" style={{ width: 200, flexShrink: 0, display: 'none' }}>
-
-          <div style={{ marginBottom: 24 }}>
-            <p style={{ fontSize: 11, fontWeight: 600, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 10 }}>Listing type</p>
-            <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontSize: 13, color: '#374151' }}>
-              <input type="checkbox" checked={showFeaturedOnly} onChange={e => setShowFeaturedOnly(e.target.checked)} />
-              Featured only
-            </label>
+          {/* Search */}
+          <div style={{ position: 'relative', marginRight: '8px' }}>
+            <input
+              type="text"
+              placeholder="Search restaurants..."
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              style={{
+                height: '36px', padding: '0 16px 0 36px', borderRadius: '9999px',
+                border: '1px solid #e5e5e5', fontSize: '13px', outline: 'none',
+                background: '#f9fafb', width: '200px', fontFamily: 'inherit',
+              }}
+            />
+            <svg style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }}
+              width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+            </svg>
           </div>
 
-          <div style={{ marginBottom: 24 }}>
-            <p style={{ fontSize: 11, fontWeight: 600, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 10 }}>Price range</p>
-            {PRICE_OPTIONS.map(p => (
-              <label key={p.value} style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontSize: 13, color: '#374151', marginBottom: 6 }}>
-                <input type="radio" name="price" checked={selectedPrice === p.value} onChange={() => setSelectedPrice(selectedPrice === p.value ? '' : p.value)} />
-                {p.label}
-              </label>
-            ))}
-          </div>
+          {/* Region filters */}
+          <span style={{ fontSize: '12px', color: '#94a3b8', marginRight: '4px' }}>Region:</span>
+          {(['all', 'east', 'middle', 'west'] as const).map(r => (
+            <FilterPill
+              key={r}
+              label={r === 'all' ? 'All' : regionConfig[r].label}
+              active={region === r}
+              activeColor={r === 'all' ? '#0f172a' : regionConfig[r].color}
+              onClick={() => setRegion(r)}
+            />
+          ))}
 
-          <div style={{ marginBottom: 24 }}>
-            <p style={{ fontSize: 11, fontWeight: 600, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 10 }}>Cuisine</p>
-            <div style={{ maxHeight: 300, overflowY: 'auto' }}>
-              {CUISINE_OPTIONS.map(c => (
-                <label key={c} style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontSize: 13, color: '#374151', marginBottom: 6 }}>
-                  <input type="checkbox" checked={selectedCuisines.includes(c)} onChange={() => toggleCuisine(c)} />
-                  {CUISINE_LABELS[c]}
-                </label>
-              ))}
-            </div>
-          </div>
+          <div style={{ width: '1px', height: '20px', background: '#e5e5e5', margin: '0 4px' }} />
+
+          {/* Price filters */}
+          <span style={{ fontSize: '12px', color: '#94a3b8', marginRight: '4px' }}>Price:</span>
+          {PRICE_OPTIONS.map(p => (
+            <FilterPill
+              key={p.value}
+              label={p.value}
+              active={selectedPrice === p.value}
+              onClick={() => setSelectedPrice(selectedPrice === p.value ? '' : p.value)}
+            />
+          ))}
+
+          <div style={{ width: '1px', height: '20px', background: '#e5e5e5', margin: '0 4px' }} />
+
+          {/* Featured filter */}
+          <FilterPill
+            label="★ Featured"
+            active={showFeaturedOnly}
+            onClick={() => setShowFeaturedOnly(!showFeaturedOnly)}
+            activeColor="#f59e0b"
+          />
+
+          <div style={{ width: '1px', height: '20px', background: '#e5e5e5', margin: '0 4px' }} />
+
+          {/* Cuisine filters — dynamic from actual data */}
+          <span style={{ fontSize: '12px', color: '#94a3b8', marginRight: '4px' }}>Cuisine:</span>
+          {Array.from(new Set(restaurants.flatMap(r => r.cuisine))).sort().map(c => (
+            <FilterPill
+              key={c}
+              label={CUISINE_LABELS[c] ?? c}
+              active={selectedCuisines.includes(c)}
+              onClick={() => toggleCuisine(c)}
+            />
+          ))}
+
+          <span style={{ marginLeft: 'auto', fontSize: '13px', color: '#475569' }}>
+            <strong style={{ color: '#0f172a' }}>{sorted.length}</strong> restaurants
+          </span>
 
           {hasActiveFilters && (
-            <button onClick={clearFilters} style={{ fontSize: 12, color: '#ef4444', background: 'none', border: 'none', cursor: 'pointer', padding: 0, textDecoration: 'underline' }}>
-              Clear all filters
-            </button>
-          )}
-        </aside>
-
-        {/* Results */}
-        <div style={{ flex: 1, minWidth: 0 }}>
-
-          {/* Mobile filter pills */}
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 16 }}>
-            {PRICE_OPTIONS.map(p => (
-              <button key={p.value} onClick={() => setSelectedPrice(selectedPrice === p.value ? '' : p.value)}
-                style={{
-                  fontSize: 12, padding: '4px 12px', borderRadius: 999,
-                  border: '1px solid', cursor: 'pointer',
-                  background:  selectedPrice === p.value ? C.teal : '#fff',
-                  color:       selectedPrice === p.value ? '#fff' : '#6b7280',
-                  borderColor: selectedPrice === p.value ? C.teal : '#e5e7eb',
-                }}>
-                {p.value}
-              </button>
-            ))}
-            <button onClick={() => setShowFeaturedOnly(!showFeaturedOnly)}
-              style={{
-                fontSize: 12, padding: '4px 12px', borderRadius: 999,
-                border: '1px solid', cursor: 'pointer',
-                background:  showFeaturedOnly ? '#2563eb' : '#fff',
-                color:       showFeaturedOnly ? '#fff' : '#6b7280',
-                borderColor: showFeaturedOnly ? '#2563eb' : '#e5e7eb',
-              }}>
-              ★ Featured
-            </button>
-          </div>
-
-          {/* Count row */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-            <p style={{ fontSize: 13, color: '#6b7280' }}>
-              {sorted.length} restaurant{sorted.length !== 1 ? 's' : ''}
-              {hasActiveFilters && (
-                <button onClick={clearFilters} style={{ marginLeft: 8, fontSize: 11, color: '#ef4444', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline' }}>
-                  clear
-                </button>
-              )}
-            </p>
-            {featuredCount > 0 && <p style={{ fontSize: 11, color: '#9ca3af' }}>★ Featured listings appear first</p>}
-          </div>
-
-          {/* Grid */}
-          {sorted.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '80px 0', color: '#9ca3af' }}>
-              <div style={{ fontSize: 40, marginBottom: 12 }}>🍴</div>
-              <p style={{ color: '#374151', fontWeight: 500, marginBottom: 8 }}>No restaurants match your filters.</p>
-              <button onClick={clearFilters} style={{ fontSize: 13, color: C.teal, background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline' }}>
-                Clear filters
-              </button>
-            </div>
-          ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 20 }}>
-              {sorted.map(restaurant => {
-                const sponsor   = sponsorMap[restaurant.id]
-                const badgeTier = getBadgeTier(restaurant)
-                // Prefer sponsor's featured image, then the restaurant's own heroImage URL
-                const imgUrl    = sponsor?.featuredImage || restaurant.heroImage || ''
-
-                return (
-                  <FeaturedCardWrapper key={restaurant.id} tier={badgeTier ?? undefined}>
-                    <Link href={`/restaurants/${restaurant.slug}`} style={{ textDecoration: 'none', display: 'block', height: '100%' }}>
-                      <div style={{
-                        background: '#fff', borderRadius: 14, overflow: 'hidden',
-                        border: '1px solid #f1f0ec', height: '100%',
-                        boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
-                      }}>
-                        {/* Image */}
-                        <div style={{ position: 'relative', height: 168, background: '#f3f4f6', overflow: 'hidden' }}>
-                          {imgUrl ? (
-                            <img
-                              src={imgUrl}
-                              alt={restaurant.name}
-                              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                            />
-                          ) : (
-                            <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 32, color: '#d1d5db' }}>
-                              🍽️
-                            </div>
-                          )}
-                          {restaurant.priceRange && (
-                            <span style={{
-                              position: 'absolute', top: 8, right: 8,
-                              background: 'rgba(0,0,0,0.55)', color: '#fff',
-                              fontSize: 11, padding: '2px 8px', borderRadius: 999,
-                            }}>
-                              {restaurant.priceRange}
-                            </span>
-                          )}
-                        </div>
-
-                        {/* Body */}
-                        <div style={{ padding: 16 }}>
-                          {badgeTier && (
-                            <div style={{ marginBottom: 8 }}>
-                              <FeaturedBadge tier={badgeTier} />
-                            </div>
-                          )}
-                          <h2 style={{ fontSize: 15, fontWeight: 600, color: '#111827', marginBottom: 2, lineHeight: 1.3 }}>
-                            {restaurant.name}
-                          </h2>
-                          {sponsor?.tagline && (
-                            <p style={{ fontSize: 12, color: '#d97706', fontStyle: 'italic', marginBottom: 4 }}>
-                              {sponsor.tagline}
-                            </p>
-                          )}
-                          {restaurant.city && (
-                            <p style={{ fontSize: 12, color: '#9ca3af', marginBottom: 8 }}>
-                              📍 {restaurant.city}
-                            </p>
-                          )}
-                          {/* Cuisine tags — translate slugs to readable labels */}
-                          {restaurant.cuisine.length > 0 && (
-                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
-                              {restaurant.cuisine.slice(0, 3).map(c => (
-                                <span key={c} style={{ fontSize: 11, padding: '2px 8px', borderRadius: 999, background: '#f3f4f6', color: '#6b7280' }}>
-                                  {CUISINE_LABELS[c] ?? c}
-                                </span>
-                              ))}
-                            </div>
-                          )}
-                          {restaurant.shortDescription && (
-                            <p style={{
-                              fontSize: 12, color: '#9ca3af', marginTop: 8,
-                              display: '-webkit-box', WebkitLineClamp: 2,
-                              WebkitBoxOrient: 'vertical', overflow: 'hidden',
-                            }}>
-                              {restaurant.shortDescription}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    </Link>
-                  </FeaturedCardWrapper>
-                )
-              })}
-            </div>
-          )}
-
-          {/* Advertise CTA */}
-          <div style={{
-            marginTop: 48, borderRadius: 16, padding: '32px',
-            background: C.navy, color: '#fff',
-            display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 16,
-          }}>
-            <div>
-              <p style={{ color: C.teal, fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: 4 }}>Own a restaurant?</p>
-              <p style={{ fontSize: 18, fontWeight: 700, marginBottom: 4 }}>Get featured on AmazingTN</p>
-              <p style={{ color: '#94a3b8', fontSize: 13 }}>Boost your listing to the top. Plans from $29/month.</p>
-            </div>
-            <Link href="/advertise" style={{
-              background: C.amber, color: '#fff', fontWeight: 600,
-              padding: '12px 24px', borderRadius: 12, textDecoration: 'none', fontSize: 14, flexShrink: 0,
+            <button onClick={clearFilters} style={{
+              fontSize: '12px', color: '#ef4444', background: 'none', border: 'none',
+              cursor: 'pointer', padding: '0 8px', fontFamily: 'inherit',
             }}>
-              See advertising options
-            </Link>
+              Clear filters
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* ── Card grid ── */}
+      <div style={{ maxWidth: '1440px', margin: '0 auto', padding: '40px 48px 80px' }}>
+        {sorted.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: '80px 0', color: '#64748b' }}>
+            <p style={{ fontSize: '18px', fontWeight: 600, color: '#1e293b', marginBottom: '8px' }}>No restaurants found</p>
+            <p style={{ fontSize: '14px', marginBottom: '20px' }}>Try adjusting your filters or search term</p>
+            <button onClick={clearFilters} style={{
+              height: '36px', padding: '0 20px', borderRadius: '9999px',
+              background: '#f59e0b', color: '#fff', border: 'none',
+              fontSize: '13px', fontWeight: 500, cursor: 'pointer', fontFamily: 'inherit',
+            }}>
+              Clear filters
+            </button>
           </div>
+        ) : (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '24px' }}>
+            {sorted.map(r => {
+              const sponsor   = sponsorMap[r.id]
+              const badgeTier = getBadgeTier(r)
+              const imgUrl    = sponsor?.featuredImage || r.heroImage || ''
+
+              return (
+                <FeaturedCardWrapper key={r.id} tier={badgeTier ?? undefined}>
+                  <div style={{
+                    background: '#fff', borderRadius: '16px', overflow: 'hidden',
+                    boxShadow: badgeTier && badgeTier !== 'basic'
+                      ? '0 2px 8px rgba(245,158,11,.15)'
+                      : '0 1px 2px rgba(0,0,0,.05)',
+                    border: badgeTier && badgeTier !== 'basic' ? '1px solid #fde68a' : '1px solid transparent',
+                    height: '100%',
+                  }}>
+                    {/* Image */}
+                    <div style={{ position: 'relative', height: '200px', overflow: 'hidden', background: '#1e293b' }}>
+                      {imgUrl ? (
+                        <img src={imgUrl} alt={r.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      ) : (
+                        <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '40px' }}>🍽️</div>
+                      )}
+                      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(15,23,42,0.4), rgba(15,23,42,0))' }} />
+
+                      {/* Featured badge — upper left of image */}
+                      {badgeTier && badgeTier !== 'basic' && (
+                        <div style={{ position: 'absolute', top: '12px', left: '12px' }}>
+                          <FeaturedBadge tier={badgeTier} />
+                        </div>
+                      )}
+
+                      {/* Price range — upper right of image */}
+                      {r.priceRange && (
+                        <span style={{
+                          position: 'absolute', top: '12px', right: '12px',
+                          background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)',
+                          color: '#fff', fontSize: '12px', fontWeight: 700,
+                          padding: '3px 8px', borderRadius: '6px',
+                        }}>
+                          {r.priceRange}
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Body */}
+                    <div style={{ padding: '20px 24px' }}>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '8px' }}>
+                        {r.city && (
+                          <span style={{ fontSize: '11px', fontWeight: 700, color: '#d97706', background: '#fef3c7', padding: '2px 8px', borderRadius: '4px' }}>
+                            {r.city}
+                          </span>
+                        )}
+                        {r.cuisine.slice(0, 2).map(c => (
+                          <span key={c} style={{ fontSize: '11px', color: '#475569', background: '#f1f5f9', padding: '2px 8px', borderRadius: '4px' }}>
+                            {CUISINE_LABELS[c] ?? c}
+                          </span>
+                        ))}
+                      </div>
+                      <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#1e293b', marginBottom: '4px', lineHeight: 1.3 }}>
+                        {r.name}
+                      </h3>
+                      {sponsor?.tagline && (
+                        <p style={{ fontSize: '13px', color: '#d97706', fontStyle: 'italic', marginBottom: '6px' }}>
+                          {sponsor.tagline}
+                        </p>
+                      )}
+                      {r.shortDescription && (
+                        <p style={{
+                          fontSize: '13px', color: '#475569', lineHeight: 1.55, marginBottom: '16px',
+                          display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden',
+                        }}>
+                          {r.shortDescription}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </FeaturedCardWrapper>
+              )
+            })}
+          </div>
+        )}
+
+        {/* ── Advertise CTA ── */}
+        <div style={{
+          marginTop: '64px', borderRadius: '16px', padding: '40px 48px',
+          background: '#0f172a', color: '#fff',
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '24px',
+        }}>
+          <div>
+            <p style={{ fontSize: '14px', color: '#fbbf24', textTransform: 'uppercase', letterSpacing: '4.2px', marginBottom: '8px' }}>Own a Restaurant?</p>
+            <h3 style={{ fontSize: '24px', fontWeight: 400, color: '#fff', marginBottom: '6px' }}>
+              Get <strong>featured on AmazingTN</strong>
+            </h3>
+            <p style={{ color: '#94a3b8', fontSize: '14px' }}>Boost your listing to the top. Plans from $29/month.</p>
+          </div>
+          <Link href="/advertise" style={{
+            display: 'inline-flex', alignItems: 'center', height: '44px', padding: '0 28px',
+            borderRadius: '9999px', background: '#f59e0b', color: '#0f172a',
+            fontWeight: 600, fontSize: '14px', textDecoration: 'none', flexShrink: 0,
+            boxShadow: '0 1px 3px rgba(0,0,0,.2)',
+          }}>
+            See Advertising Options →
+          </Link>
         </div>
       </div>
     </div>
+  )
+}
+
+/* ─── Filter Pill ── */
+function FilterPill({ label, active, onClick, activeColor = '#0f172a' }: {
+  label: string; active: boolean; onClick: () => void; activeColor?: string
+}) {
+  const [hovered, setHovered] = useState(false)
+  return (
+    <button
+      onClick={onClick}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        height: '30px', padding: '0 14px', borderRadius: '9999px',
+        fontSize: '12px', fontWeight: active ? 600 : 400,
+        border: active ? 'none' : '1px solid #e5e5e5',
+        background: active ? activeColor : hovered ? '#f9fafb' : '#fff',
+        color: active ? '#fff' : '#0a0a0a',
+        cursor: 'pointer', fontFamily: 'inherit',
+        transition: 'all 0.15s ease', whiteSpace: 'nowrap',
+      }}
+    >
+      {label}
+    </button>
   )
 }

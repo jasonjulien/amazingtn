@@ -1,46 +1,40 @@
-import React from 'react'
-
 type Tier = 'basic' | 'featured' | 'premier'
 
-interface FeaturedBadgeProps {
-  tier: Tier
-  className?: string
-}
-
-const TIER_CONFIG: Record<
-  Tier,
-  { label: string; bg: string; text: string; border: string; icon: string }
-> = {
-  basic: {
-    label: 'Sponsored',
-    bg: 'bg-gray-100',
-    text: 'text-gray-600',
-    border: 'border-gray-200',
-    icon: '·',
-  },
+const TIER_CONFIG: Record<Tier, { label: string; bg: string; color: string; border: string; icon?: string } | null> = {
+  basic: null,
   featured: {
-    label: 'Featured',
-    bg: 'bg-blue-50',
-    text: 'text-blue-700',
-    border: 'border-blue-200',
-    icon: '★',
+    label:  'Featured',
+    bg:     '#fef3c7',
+    color:  '#d97706',
+    border: '#fde68a',
+    icon:   '★',
   },
   premier: {
-    label: 'Premier',
-    bg: 'bg-amber-50',
-    text: 'text-amber-700',
-    border: 'border-amber-300',
-    icon: '★',
+    label:  'Premier',
+    bg:     '#f5f3ff',
+    color:  '#7c3aed',
+    border: '#ddd6fe',
+    icon:   '★',
   },
 }
 
-export default function FeaturedBadge({ tier, className = '' }: FeaturedBadgeProps) {
+export default function FeaturedBadge({ tier }: { tier: Tier }) {
   const cfg = TIER_CONFIG[tier]
+  if (!cfg) return null
   return (
-    <span
-      className={`inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full border ${cfg.bg} ${cfg.text} ${cfg.border} ${className}`}
-    >
-      <span aria-hidden="true">{cfg.icon}</span>
+    <span style={{
+      display:      'inline-flex',
+      alignItems:   'center',
+      gap:          '4px',
+      fontSize:     '11px',
+      fontWeight:   700,
+      padding:      '3px 10px',
+      borderRadius: '9999px',
+      background:   cfg.bg,
+      color:        cfg.color,
+      border:       `1px solid ${cfg.border}`,
+    }}>
+      {cfg.icon && <span aria-hidden="true">{cfg.icon}</span>}
       {cfg.label}
     </span>
   )
