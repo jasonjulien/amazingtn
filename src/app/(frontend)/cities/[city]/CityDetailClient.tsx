@@ -4,6 +4,8 @@ import Link from 'next/link'
 import { useState } from 'react'
 import HeaderWrapper from '@/components/HeaderWrapper'
 import DestinationCard from '@/components/DestinationCard'
+import FeaturedBadge from '@/components/FeaturedBadge'
+import FeaturedCardWrapper from '@/components/FeaturedCardWrapper'
 
 type CityData = {
   slug:        string
@@ -22,7 +24,7 @@ type NearbyCity = { slug: string; name: string; tagline: string }
 type DestinationData = {
   slug: string; name: string; shortDescription: string
   city: string; region: string; category: string
-  featured: boolean; heroImage: string
+  featured: boolean; featuredTier?: string; heroImage: string
 }
 
 type RestaurantData = {
@@ -45,30 +47,38 @@ const regionConfig = {
 }
 
 const cuisineLabels: Record<string, string> = {
-  american:            'American',
-  bbq:                 'BBQ',
-  southern:            'Southern',
-  'hot-chicken':       'Hot Chicken',
-  italian:             'Italian',
-  mexican:             'Mexican',
-  seafood:             'Seafood',
-  asian:               'Asian',
-  french:              'French',
-  mediterranean:       'Mediterranean',
-  steakhouse:          'Steakhouse',
-  'breakfast-brunch':  'Breakfast & Brunch',
-  'burgers-sandwiches':'Burgers & Sandwiches',
-  pizza:               'Pizza',
-  'vegetarian-vegan':  'Vegetarian/Vegan',
-  'bar-gastropub':     'Bar & Gastropub',
-  other:               'Other',
+  american:             'American',
+  bbq:                  'BBQ',
+  southern:             'Southern',
+  'hot-chicken':        'Hot Chicken',
+  italian:              'Italian',
+  mexican:              'Mexican',
+  seafood:              'Seafood',
+  asian:                'Asian',
+  french:               'French',
+  mediterranean:        'Mediterranean',
+  steakhouse:           'Steakhouse',
+  'breakfast-brunch':   'Breakfast & Brunch',
+  'burgers-sandwiches': 'Burgers & Sandwiches',
+  pizza:                'Pizza',
+  'vegetarian-vegan':   'Vegetarian/Vegan',
+  'bar-gastropub':      'Bar & Gastropub',
+  other:                'Other',
 }
 
-const priceColors: Record<string, string> = {
-  '$':    '#059669',
-  '$$':   '#d97706',
-  '$$$':  '#dc2626',
-  '$$$$': '#7c3aed',
+const TIER_ORDER: Record<string, number> = {
+  premier:  0,
+  premium:  1,
+  featured: 2,
+  basic:    3,
+  free:     99,
+}
+
+function getRestaurantBadgeTier(r: RestaurantData): 'basic' | 'featured' | 'premier' | null {
+  if (!r.featured) return null
+  if (r.featuredTier === 'premier' || r.featuredTier === 'premium') return 'premier'
+  if (r.featuredTier === 'featured') return 'featured'
+  return 'basic'
 }
 
 export default function CityDetailClient({ city, nearbyCities, cityDestinations, cityRestaurants }: {
@@ -79,6 +89,13 @@ export default function CityDetailClient({ city, nearbyCities, cityDestinations,
 }) {
   const regionCfg = regionConfig[city.region]
   const [hoveredHighlight, setHoveredHighlight] = useState<string | null>(null)
+
+  // Sort restaurants: premier → featured → basic → free
+  const sortedRestaurants = [...cityRestaurants].sort((a, b) => {
+    const sa = a.featured ? (TIER_ORDER[a.featuredTier] ?? 3) : 99
+    const sb = b.featured ? (TIER_ORDER[b.featuredTier] ?? 3) : 99
+    return sa - sb
+  })
 
   return (
     <div style={{ background: '#fafaf9', minHeight: '100vh' }}>
@@ -121,8 +138,8 @@ export default function CityDetailClient({ city, nearbyCities, cityDestinations,
           <StatItem label="Population" value={city.population} />
           <StatItem label="Region" value={regionCfg.label} />
           <StatItem label="Attractions" value={`${cityDestinations.length > 0 ? cityDestinations.length : city.highlights.length}+`} />
-          {cityRestaurants.length > 0 && (
-            <StatItem label="Restaurants" value={`${cityRestaurants.length}+`} />
+          {sortedRestaurants.length > 0 && (
+            <StatItem label="Restaurants" value={`${sortedRestaurants.length}+`} />
           )}
           <div style={{ marginLeft: 'auto' }}>
             <Link href={`/explore?region=${city.region}`} style={{
@@ -185,7 +202,7 @@ export default function CityDetailClient({ city, nearbyCities, cityDestinations,
       )}
 
       {/* ── Where to Eat ── */}
-      {cityRestaurants.length > 0 && (
+      {sortedRestaurants.length > 0 && (
         <div style={{ background: '#fafaf9', padding: '64px 0' }}>
           <div style={{ maxWidth: '1440px', margin: '0 auto', padding: '0 48px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '32px' }}>
@@ -204,9 +221,14 @@ export default function CityDetailClient({ city, nearbyCities, cityDestinations,
               </Link>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '24px' }}>
-              {cityRestaurants.map(r => (
-                <RestaurantCard key={r.slug} restaurant={r} regionColor={regionCfg.color} />
-              ))}
+              {sortedRestaurants.map(r => {
+                const badgeTier = getRestaurantBadgeTier(r)
+                return (
+                  <FeaturedCardWrapper key={r.slug} tier={badgeTier ?? undefined}>
+                    <RestaurantCard restaurant={r} badgeTier={badgeTier} regionColor={regionCfg.color} />
+                  </FeaturedCardWrapper>
+                )
+              })}
             </div>
           </div>
         </div>
@@ -263,13 +285,16 @@ export default function CityDetailClient({ city, nearbyCities, cityDestinations,
           </Link>
         </div>
       </div>
-
     </div>
   )
 }
 
 /* ─── Restaurant Card ─────────────────────────── */
-function RestaurantCard({ restaurant: r, regionColor }: { restaurant: RestaurantData; regionColor: string }) {
+function RestaurantCard({ restaurant: r, badgeTier, regionColor }: {
+  restaurant: RestaurantData
+  badgeTier:  'basic' | 'featured' | 'premier' | null
+  regionColor: string
+}) {
   const [hovered, setHovered] = useState(false)
 
   return (
@@ -277,11 +302,13 @@ function RestaurantCard({ restaurant: r, regionColor }: { restaurant: Restaurant
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
-        background: '#fff', borderRadius: '16px', overflow: 'hidden',
-        boxShadow: hovered ? '0 8px 24px rgba(0,0,0,.10)' : r.featuredTier !== 'free' ? '0 2px 8px rgba(245,158,11,.15)' : '0 1px 2px rgba(0,0,0,.05)',
-        border: r.featuredTier !== 'free' ? '1px solid #fde68a' : '1px solid transparent',
-        transform: hovered ? 'translateY(-3px)' : 'translateY(0)',
-        transition: 'all 0.2s ease',
+        background:   '#fff',
+        borderRadius: '16px',
+        overflow:     'hidden',
+        boxShadow:    hovered ? '0 8px 24px rgba(0,0,0,.10)' : '0 1px 2px rgba(0,0,0,.05)',
+        transform:    hovered ? 'translateY(-3px)' : 'translateY(0)',
+        transition:   'all 0.2s ease',
+        height:       '100%',
       }}
     >
       <div style={{ position: 'relative', height: '180px', overflow: 'hidden', background: '#1e293b' }}>
@@ -294,23 +321,34 @@ function RestaurantCard({ restaurant: r, regionColor }: { restaurant: Restaurant
           <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '40px' }}>🍽️</div>
         )}
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(15,23,42,0.5), rgba(15,23,42,0))' }} />
-        {r.featuredTier !== 'free' && (
-          <div style={{ position: 'absolute', top: '12px', left: '12px', background: '#f59e0b', color: '#fff', fontSize: '10px', fontWeight: 700, padding: '3px 8px', borderRadius: '6px' }}>
-            FEATURED
+
+        {/* Badge — upper left of image for featured/premier */}
+        {badgeTier && badgeTier !== 'basic' && (
+          <div style={{ position: 'absolute', top: '12px', left: '12px' }}>
+            <FeaturedBadge tier={badgeTier} />
           </div>
         )}
+
+        {/* Price range — upper right */}
         {r.priceRange && (
           <div style={{
             position: 'absolute', top: '12px', right: '12px',
             background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)',
-            color: priceColors[r.priceRange] ?? '#fff',
-            fontSize: '12px', fontWeight: 700, padding: '3px 8px', borderRadius: '6px',
+            color: '#fff', fontSize: '12px', fontWeight: 700,
+            padding: '3px 8px', borderRadius: '6px',
           }}>
             {r.priceRange}
           </div>
         )}
       </div>
+
       <div style={{ padding: '16px 20px' }}>
+        {/* Basic badge in card body */}
+        {badgeTier === 'basic' && (
+          <div style={{ marginBottom: '8px' }}>
+            <FeaturedBadge tier="basic" />
+          </div>
+        )}
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '8px' }}>
           {r.cuisine.slice(0, 2).map(c => (
             <span key={c} style={{ fontSize: '11px', color: '#475569', background: '#f1f5f9', padding: '2px 8px', borderRadius: '4px' }}>

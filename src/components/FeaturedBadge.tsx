@@ -1,7 +1,12 @@
 type Tier = 'basic' | 'featured' | 'premier'
 
 const TIER_CONFIG: Record<Tier, { label: string; bg: string; color: string; border: string; icon?: string } | null> = {
-  basic: null,
+  basic: {
+    label:  'Sponsored',
+    bg:     '#f8fafc',
+    color:  '#64748b',
+    border: '#e2e8f0',
+  },
   featured: {
     label:  'Featured',
     bg:     '#fef3c7',

@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { LocationIcon, PlusIcon } from './Icons'
 import { useItinerary } from '@/context/ItineraryContext'
+import FeaturedBadge from './FeaturedBadge'
 
 export type Category =
   | 'music'
@@ -21,6 +22,7 @@ export interface DestinationCardProps {
   region:           'east' | 'middle' | 'west'
   category:         Category
   featured?:        boolean
+  featuredTier?:    string
   heroImage?:       string
 }
 
@@ -39,19 +41,27 @@ const regionLabel: Record<string, string> = {
   west:   'West Tennessee',
 }
 
+function getBadgeTier(featured: boolean, featuredTier?: string): 'basic' | 'featured' | 'premier' | null {
+  if (!featured) return null
+  if (featuredTier === 'premier' || featuredTier === 'premium') return 'premier'
+  if (featuredTier === 'featured') return 'featured'
+  return 'basic'
+}
+
 export default function DestinationCard({
-  slug, name, shortDescription, city, region, category, featured = false, heroImage,
+  slug, name, shortDescription, city, region, category,
+  featured = false, featuredTier, heroImage,
 }: DestinationCardProps) {
   const [hovered, setHovered]       = useState(false)
   const [addHovered, setAddHovered] = useState(false)
   const { addStop, removeStop, isAdded, days } = useItinerary()
-  const added = isAdded(slug)
-  const cat = categoryConfig[category]
+  const added    = isAdded(slug)
+  const cat      = categoryConfig[category]
+  const badgeTier = getBadgeTier(featured, featuredTier)
 
   function handleAdd(e: React.MouseEvent) {
     e.preventDefault()
     if (added) {
-      // Remove from whichever day it's in
       const day = days.find(d => d.stops.some(s => s.slug === slug))
       if (day) removeStop(slug, day.id)
     } else {
@@ -69,7 +79,16 @@ export default function DestinationCard({
         overflow:       'hidden',
         boxShadow:      hovered
           ? '0 8px 24px rgba(0,0,0,.10), 0 2px 6px rgba(0,0,0,.06)'
-          : '0 1px 2px rgba(0,0,0,.05)',
+          : badgeTier === 'premier'
+            ? '0 0 0 2px #f59e0b, 0 8px 24px rgba(245,158,11,0.2)'
+            : badgeTier === 'featured'
+              ? '0 0 0 1px #fde68a, 0 4px 16px rgba(245,158,11,0.12)'
+              : '0 1px 2px rgba(0,0,0,.05)',
+        outline: badgeTier === 'premier'
+          ? '2px solid #f59e0b'
+          : badgeTier === 'featured'
+            ? '1px solid #fde68a'
+            : 'none',
         transform:      hovered ? 'translateY(-3px)' : 'translateY(0)',
         transition:     'box-shadow 0.2s ease, transform 0.2s ease',
         cursor:         'pointer',
@@ -92,14 +111,36 @@ export default function DestinationCard({
           background: 'linear-gradient(to top, rgba(0,0,0,0.4), rgba(0,0,0,0))',
           opacity: hovered ? 1 : 0, transition: 'opacity 0.2s ease',
         }} />
-        <div style={{ position: 'absolute', top: '18px', left: '16px', display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-          {featured && <span style={badgeStyle('#f59e0b', '#fff')}>Featured</span>}
-          <span style={badgeStyle(cat.bg, cat.color)}>{cat.label}</span>
+
+        {/* Featured/Premier badge — upper left */}
+        {badgeTier && badgeTier !== 'basic' && (
+          <div style={{ position: 'absolute', top: '12px', left: '12px' }}>
+            <FeaturedBadge tier={badgeTier} />
+          </div>
+        )}
+
+        {/* Category badge — upper right (or left if no featured badge) */}
+        <div style={{ position: 'absolute', top: '12px', right: '12px' }}>
+          <span style={{
+            display: 'inline-flex', alignItems: 'center',
+            padding: '4px 10px', borderRadius: '6px',
+            fontSize: '11px', fontWeight: 700,
+            background: cat.bg, color: cat.color,
+            boxShadow: '0 1px 3px rgba(0,0,0,.1)', whiteSpace: 'nowrap',
+          }}>
+            {cat.label}
+          </span>
         </div>
       </div>
 
       {/* ── Card body ── */}
       <div style={{ padding: '24px' }}>
+        {/* Basic sponsored badge in body */}
+        {badgeTier === 'basic' && (
+          <div style={{ marginBottom: '8px' }}>
+            <FeaturedBadge tier="basic" />
+          </div>
+        )}
         <h3 style={{ fontSize: '19.5px', fontWeight: 700, color: '#1e293b', marginBottom: '8px', lineHeight: '1.3' }}>
           {name}
         </h3>
@@ -145,14 +186,4 @@ export default function DestinationCard({
       </div>
     </Link>
   )
-}
-
-function badgeStyle(bg: string, color: string): React.CSSProperties {
-  return {
-    display: 'inline-flex', alignItems: 'center',
-    padding: '4px 10px', borderRadius: '6px',
-    fontSize: '11px', fontWeight: 700,
-    background: bg, color,
-    boxShadow: '0 1px 3px rgba(0,0,0,.1)', whiteSpace: 'nowrap',
-  }
 }

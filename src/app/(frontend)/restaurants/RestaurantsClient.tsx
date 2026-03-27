@@ -136,7 +136,9 @@ export default function RestaurantsClient({ restaurants, sponsorMap }: Props) {
   function getBadgeTier(r: RestaurantItem): 'basic' | 'featured' | 'premier' | null {
     const s = sponsorMap[r.id]
     if (s) return s.tier as 'basic' | 'featured' | 'premier'
-    if (r.featured && r.featuredTier === 'premium') return 'featured'
+    if (r.featured && r.featuredTier === 'premier') return 'premier'
+    if (r.featured && r.featuredTier === 'premium') return 'premier'
+    if (r.featured && r.featuredTier === 'featured') return 'featured'
     if (r.featured) return 'basic'
     return null
   }

@@ -17,6 +17,7 @@
     "payload": "cross-env NODE_OPTIONS=--no-deprecation payload",
     "seed": "tsx src/scripts/seed.ts",
     "seed:restaurants": "npx tsx src/scripts/seed-restaurants.ts",
+    "seed:restaurants-v2": "npx tsx src/scripts/seed-restaurants-v2.ts",
     "test-db": "cross-env NODE_OPTIONS=--no-deprecation payload run src/scripts/test-connection.ts",
     "reinstall": "cross-env NODE_OPTIONS=--no-deprecation rm -rf node_modules && rm pnpm-lock.yaml && pnpm --ignore-workspace install",
     "start": "cross-env NODE_OPTIONS=--no-deprecation next start",

@@ -10,48 +10,82 @@ export const metadata: Metadata = {
 
 const tiers = [
   {
-    name: 'Basic', price: 29, priceId: 'basic',
-    tagline: 'Get discovered',
+    name:        'Basic',
+    price:       29,
+    priceId:     'basic',
+    billing:     '/month',
+    tagline:     'Get discovered',
     accentColor: '#e2e8f0',
-    ctaBg: '#f1f5f9', ctaColor: '#1e293b',
+    ctaBg:       '#f1f5f9',
+    ctaColor:    '#1e293b',
     features: [
-      '"Sponsored" badge on your listing card',
+      'Sorted above free listings in results',
+      'Contact info & website link on your card',
+      'Appears in city and category pages',
+      'Subtle "Sponsored" label on card',
       'Listed in search & filter results',
-      'Contact info + website link displayed',
-      'Appears in category pages',
     ],
   },
   {
-    name: 'Featured', price: 79, priceId: 'featured',
-    tagline: 'Stand out from the crowd',
-    badge: 'Most Popular',
+    name:        'Featured',
+    price:       79,
+    priceId:     'featured',
+    billing:     '/month',
+    tagline:     'Stand out from the crowd',
+    badge:       'Most Popular',
     accentColor: '#f59e0b',
-    ctaBg: '#f59e0b', ctaColor: '#0f172a',
-    ring: true,
+    ctaBg:       '#f59e0b',
+    ctaColor:    '#0f172a',
+    ring:        true,
     features: [
       'Everything in Basic',
+      '★ Featured badge on your listing card',
       'Boosted to top of all category pages',
-      'Featured image on listing card',
-      'Highlighted card border treatment',
-      'Included in "Featured" filter tab',
+      'Thin amber highlighted card border',
+      'Upload your own listing photo',
       'Priority placement on city pages',
+      'Included in "★ Featured" filter tab',
     ],
   },
   {
-    name: 'Premier', price: 149, priceId: 'premier',
-    tagline: 'Maximum Tennessee exposure',
+    name:        'Premier',
+    price:       149,
+    priceId:     'premier',
+    billing:     '/month',
+    tagline:     'Maximum Tennessee exposure',
     accentColor: '#7c3aed',
-    ctaBg: '#7c3aed', ctaColor: '#ffffff',
+    ctaBg:       '#7c3aed',
+    ctaColor:    '#ffffff',
     features: [
       'Everything in Featured',
+      '★ Premier badge on your listing card',
+      'Prominent double-border card treatment',
       'Custom promotional tagline on card',
-      'Rotating homepage spotlight section',
+      'Hero placement on city & region pages',
       'Monthly social media mention',
       'Analytics dashboard (coming soon)',
-      'Dedicated account manager',
     ],
   },
 ]
+
+const articleTier = {
+  name:        'Sponsored Article',
+  price:       399,
+  billing:     'one-time',
+  tagline:     'Own the search results',
+  accentColor: '#0f172a',
+  ctaBg:       '#0f172a',
+  ctaColor:    '#ffffff',
+  comingSoon:  true,
+  features: [
+    'Dedicated SEO-optimized article about your business',
+    'Published on AmazingTN with your branding',
+    'Permanent link from relevant city & category pages',
+    'Professionally written by our editorial team',
+    'Shared across our social channels on launch',
+    'Ideal for hotels, distilleries, and unique attractions',
+  ],
+}
 
 const benefits = [
   { icon: '🎯', title: 'High-Intent Audience',  desc: 'Visitors are actively searching for where to eat and what to do — not passively scrolling a feed.' },
@@ -66,6 +100,39 @@ const faqs = [
   { q: "What if my restaurant isn't listed yet?",  a: "Sign up and we'll add your listing during onboarding. Name, address, and cuisine type is all we need." },
   { q: 'Can I upgrade my tier later?',             a: 'Absolutely. Email hello@amazingtn.com and we will prorate the difference.' },
   { q: 'Do you offer annual plans?',               a: 'Annual plans (two months free) are available — just email us to get set up.' },
+  { q: 'Can I upload my own photo?',               a: 'Yes — Featured and Premier listings can submit a custom photo that replaces the default image on your card.' },
+]
+
+// ── Sample card data ─────────────────────────────────────────────────────────
+
+const sampleCards = [
+  {
+    tier:       'basic' as const,
+    label:      'Basic listing',
+    labelColor: '#94a3b8',
+    badge:      { text: 'Sponsored', bg: '#f8fafc', color: '#64748b', border: '#e2e8f0' },
+    border:     'none',
+    shadow:     '0 1px 2px rgba(0,0,0,.05)',
+    outline:    '1px solid #e5e5e5',
+  },
+  {
+    tier:       'featured' as const,
+    label:      'Featured listing',
+    labelColor: '#d97706',
+    badge:      { text: '★ Featured', bg: '#fef3c7', color: '#d97706', border: '#fde68a' },
+    border:     'none',
+    shadow:     '0 4px 16px rgba(245,158,11,0.12)',
+    outline:    '1px solid #fde68a',
+  },
+  {
+    tier:       'premier' as const,
+    label:      'Premier listing',
+    labelColor: '#7c3aed',
+    badge:      { text: '★ Premier', bg: '#f5f3ff', color: '#7c3aed', border: '#ddd6fe' },
+    border:     'none',
+    shadow:     '0 8px 24px rgba(245,158,11,0.2)',
+    outline:    '2px solid #f59e0b',
+  },
 ]
 
 export default function AdvertisePage() {
@@ -80,10 +147,8 @@ export default function AdvertisePage() {
         justifyContent: 'center', paddingTop: '100px',
       }}>
         <img
-          //src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1600&q=85"
-          //alt="Tennessee dining"
-          src="https://images.unsplash.com/photo-1574097880168-21606735d77b?q=80&w=1774"
-          alt="Enjoying the peace of Tennessee"
+          src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1600&q=85"
+          alt="Tennessee dining"
           style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 50%' }}
         />
         <div style={{ position: 'absolute', inset: 0, background: 'rgba(15,23,42,0.65)' }} />
@@ -169,12 +234,13 @@ export default function AdvertisePage() {
             <p style={{ color: '#64748b', fontSize: '15px' }}>No contracts. Cancel anytime.</p>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '24px', maxWidth: '960px', margin: '0 auto' }}>
+          {/* Monthly tiers */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '24px', maxWidth: '960px', margin: '0 auto 32px' }}>
             {tiers.map(tier => (
               <div key={tier.name} style={{
                 background: '#fff', borderRadius: '16px', overflow: 'hidden',
                 boxShadow: (tier as any).ring
-                  ? `0 0 0 2px #f59e0b, 0 8px 24px rgba(245,158,11,0.15)`
+                  ? '0 0 0 2px #f59e0b, 0 8px 24px rgba(245,158,11,0.15)'
                   : '0 1px 2px rgba(0,0,0,.05)',
                 border: (tier as any).ring ? 'none' : '1px solid #e5e5e5',
                 display: 'flex', flexDirection: 'column', position: 'relative',
@@ -192,7 +258,7 @@ export default function AdvertisePage() {
                   <p style={{ color: '#64748b', fontSize: '13px', marginBottom: '20px' }}>{tier.tagline}</p>
                   <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px', marginBottom: '24px' }}>
                     <span style={{ fontSize: '42px', fontWeight: 700, color: '#1e293b' }}>${tier.price}</span>
-                    <span style={{ color: '#94a3b8', fontSize: '13px' }}>/month</span>
+                    <span style={{ color: '#94a3b8', fontSize: '13px' }}>{tier.billing}</span>
                   </div>
                   <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 28px', flex: 1, display: 'flex', flexDirection: 'column', gap: '10px' }}>
                     {tier.features.map(f => (
@@ -215,6 +281,51 @@ export default function AdvertisePage() {
               </div>
             ))}
           </div>
+
+          {/* Sponsored Article — full-width card */}
+          <div style={{ maxWidth: '960px', margin: '0 auto' }}>
+            <div style={{
+              background: '#fff', borderRadius: '16px', border: '1px solid #e5e5e5',
+              overflow: 'hidden', boxShadow: '0 1px 2px rgba(0,0,0,.05)',
+              display: 'grid', gridTemplateColumns: '1fr auto', alignItems: 'center',
+              position: 'relative',
+            }}>
+              <div style={{ height: '5px', background: '#0f172a', gridColumn: '1 / -1' }} />
+              <div style={{ padding: '28px 32px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
+                  <h3 style={{ fontSize: '20px', fontWeight: 700, color: '#1e293b' }}>{articleTier.name}</h3>
+                  <span style={{ fontSize: '11px', fontWeight: 700, color: '#64748b', background: '#f1f5f9', border: '1px solid #e2e8f0', padding: '3px 10px', borderRadius: '9999px' }}>
+                    Coming Soon
+                  </span>
+                </div>
+                <p style={{ color: '#64748b', fontSize: '13px', marginBottom: '16px' }}>{articleTier.tagline}</p>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
+                  {articleTier.features.map(f => (
+                    <div key={f} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', fontSize: '13px', color: '#475569' }}>
+                      <span style={{ color: '#94a3b8', fontWeight: 700, flexShrink: 0 }}>✓</span>
+                      {f}
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div style={{ padding: '28px 32px', textAlign: 'center', borderLeft: '1px solid #e5e5e5', minWidth: '200px' }}>
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px', justifyContent: 'center', marginBottom: '4px' }}>
+                  <span style={{ fontSize: '42px', fontWeight: 700, color: '#1e293b' }}>${articleTier.price}</span>
+                </div>
+                <p style={{ color: '#94a3b8', fontSize: '13px', marginBottom: '16px' }}>one-time</p>
+                <a href="mailto:hello@amazingtn.com" style={{
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  height: '44px', borderRadius: '9999px',
+                  fontWeight: 600, fontSize: '14px', textDecoration: 'none',
+                  background: '#f1f5f9', color: '#475569',
+                  border: '1px solid #e5e5e5',
+                }}>
+                  Join waitlist →
+                </a>
+              </div>
+            </div>
+          </div>
+
           <p style={{ textAlign: 'center', color: '#94a3b8', fontSize: '13px', marginTop: '24px' }}>
             Need an annual plan or custom arrangement?{' '}
             <a href="mailto:hello@amazingtn.com" style={{ color: '#d97706' }}>Email us</a>.
@@ -222,7 +333,7 @@ export default function AdvertisePage() {
         </div>
       </section>
 
-      {/* ── Before / after ── */}
+      {/* ── All 3 sample cards ── */}
       <section style={{ background: '#fff', padding: '80px 0' }}>
         <div style={{ maxWidth: '1440px', margin: '0 auto', padding: '0 48px' }}>
           <div style={{ textAlign: 'center', marginBottom: '48px' }}>
@@ -231,41 +342,53 @@ export default function AdvertisePage() {
               What your <strong>listing will look like</strong>
             </h2>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px', maxWidth: '800px', margin: '0 auto' }}>
-            {/* Standard */}
-            <div>
-              <p style={{ fontSize: '12px', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '12px' }}>Standard listing</p>
-              <div style={{ background: '#fff', border: '1px solid #e5e5e5', borderRadius: '16px', overflow: 'hidden', boxShadow: '0 1px 2px rgba(0,0,0,.05)' }}>
-                <div style={{ height: '140px', background: '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '40px', color: '#cbd5e1' }}>🍽️</div>
-                <div style={{ padding: '20px' }}>
-                  <h3 style={{ fontWeight: 700, fontSize: '16px', color: '#1e293b', marginBottom: '4px' }}>The Loveless Cafe</h3>
-                  <p style={{ fontSize: '12px', color: '#94a3b8', marginBottom: '10px' }}>Nashville, TN</p>
-                  <div style={{ display: 'flex', gap: '6px' }}>
-                    {['Southern', 'Breakfast'].map(t => (
-                      <span key={t} style={{ fontSize: '11px', padding: '2px 8px', borderRadius: '4px', background: '#f1f5f9', color: '#475569' }}>{t}</span>
-                    ))}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '24px', maxWidth: '960px', margin: '0 auto' }}>
+            {sampleCards.map(card => (
+              <div key={card.tier}>
+                <p style={{ fontSize: '12px', fontWeight: 700, color: card.labelColor, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '12px' }}>
+                  {card.label}
+                </p>
+                <div style={{
+                  background: '#fff', borderRadius: '16px', overflow: 'hidden',
+                  boxShadow: card.shadow, outline: card.outline,
+                }}>
+                  <div style={{ height: '140px', background: 'linear-gradient(135deg, #0f172a, #1e293b)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '40px', position: 'relative' }}>
+                    🍽️
+                    {/* Price pill — upper right always */}
+                    <div style={{ position: 'absolute', top: '12px', right: '12px', background: 'rgba(0,0,0,0.6)', color: '#fff', fontSize: '11px', fontWeight: 700, padding: '3px 8px', borderRadius: '6px' }}>$</div>
+                    {/* Featured/Premier badge — upper left of photo */}
+                    {card.tier !== 'basic' && (
+                      <div style={{ position: 'absolute', top: '12px', left: '12px' }}>
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '11px', fontWeight: 700, padding: '3px 10px', borderRadius: '9999px', background: card.badge.bg, color: card.badge.color, border: `1px solid ${card.badge.border}` }}>
+                          {card.badge.text}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                  <div style={{ padding: '16px 20px' }}>
+                    {/* Basic badge — top of text section */}
+                    {card.tier === 'basic' && (
+                      <div style={{ marginBottom: '8px' }}>
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '11px', fontWeight: 700, padding: '3px 10px', borderRadius: '9999px', background: card.badge.bg, color: card.badge.color, border: `1px solid ${card.badge.border}` }}>
+                          {card.badge.text}
+                        </span>
+                      </div>
+                    )}
+                    <div style={{ display: 'flex', gap: '6px', marginBottom: '8px' }}>
+                      <span style={{ fontSize: '11px', fontWeight: 700, color: '#d97706', background: '#fef3c7', padding: '2px 8px', borderRadius: '4px' }}>Nashville</span>
+                      <span style={{ fontSize: '11px', color: '#475569', background: '#f1f5f9', padding: '2px 8px', borderRadius: '4px' }}>Southern</span>
+                    </div>
+                    <h3 style={{ fontWeight: 700, fontSize: '16px', color: '#1e293b', marginBottom: '2px' }}>The Loveless Cafe</h3>
+                    {/* Promotional tagline — Premier only */}
+                    {card.tier === 'premier' && (
+                      <p style={{ fontSize: '12px', color: '#d97706', fontStyle: 'italic', marginBottom: '4px' }}>Nashville's most beloved biscuits since 1951</p>
+                    )}
+                    <p style={{ fontSize: '12px', color: '#475569', lineHeight: 1.5, marginBottom: '10px' }}>A Nashville icon serving scratch-made biscuits and country ham in a charming roadhouse setting.</p>
+                    <a href="#" style={{ fontSize: '12px', color: '#d97706', fontWeight: 500 }}>Visit Site →</a>
                   </div>
                 </div>
               </div>
-            </div>
-            {/* Featured */}
-            <div>
-              <p style={{ fontSize: '12px', fontWeight: 700, color: '#d97706', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '12px' }}>Featured listing ★</p>
-              <div style={{ background: '#fff', borderRadius: '16px', overflow: 'hidden', boxShadow: '0 0 0 2px #f59e0b, 0 6px 20px rgba(245,158,11,0.15)' }}>
-                <div style={{ height: '140px', background: 'linear-gradient(135deg, #0f172a, #1e293b)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '40px' }}>🍽️</div>
-                <div style={{ padding: '20px' }}>
-                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '11px', fontWeight: 700, padding: '2px 10px', borderRadius: '9999px', background: '#fef3c7', color: '#d97706', marginBottom: '8px' }}>★ Featured</span>
-                  <h3 style={{ fontWeight: 700, fontSize: '16px', color: '#1e293b', marginBottom: '2px' }}>The Loveless Cafe</h3>
-                  <p style={{ fontSize: '12px', color: '#d97706', fontStyle: 'italic', marginBottom: '4px' }}>Nashville's most beloved biscuits since 1951</p>
-                  <p style={{ fontSize: '12px', color: '#94a3b8', marginBottom: '10px' }}>Nashville, TN</p>
-                  <div style={{ display: 'flex', gap: '6px' }}>
-                    {['Southern', 'Breakfast'].map(t => (
-                      <span key={t} style={{ fontSize: '11px', padding: '2px 8px', borderRadius: '4px', background: '#f1f5f9', color: '#475569' }}>{t}</span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </section>
@@ -295,7 +418,7 @@ export default function AdvertisePage() {
           <h2 style={{ fontSize: 'clamp(28px, 4vw, 40px)', fontWeight: 400, color: '#fff', marginBottom: '12px' }}>
             Start reaching <strong>Tennessee travelers</strong> today
           </h2>
-          <p style={{ color: '#94a3b8', fontSize: '16px', marginBottom: '36px', maxWidth: '480px', margin: '0 auto 36px', lineHeight: 1.65 }}>
+          <p style={{ color: '#94a3b8', fontSize: '16px', maxWidth: '480px', margin: '0 auto 36px', lineHeight: 1.65 }}>
             Set up your featured listing in under 5 minutes. No contracts, cancel anytime.
           </p>
           <Link href="/advertise/signup?tier=featured" style={{

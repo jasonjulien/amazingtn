@@ -1,36 +1,34 @@
-/**
- * Wrap any card in this component to apply a featured-tier border highlight.
- * Usage:
- *   <FeaturedCardWrapper tier={sponsor?.tier}>
- *     <RestaurantCard restaurant={r} />
- *   </FeaturedCardWrapper>
- *
- * If tier is undefined / null the wrapper is invisible and adds no markup overhead.
- */
-
-import React from 'react'
-
 type Tier = 'basic' | 'featured' | 'premier' | undefined | null
 
-const BORDER_CLASS: Record<string, string> = {
-  basic: 'ring-1 ring-gray-300',
-  featured: 'ring-2 ring-blue-400 shadow-md shadow-blue-100',
-  premier: 'ring-2 ring-amber-400 shadow-md shadow-amber-100',
+const BORDER_STYLE: Record<string, React.CSSProperties> = {
+  basic: {
+    borderRadius: '16px',
+    overflow:     'hidden',
+  },
+  featured: {
+    borderRadius: '16px',
+    overflow:     'hidden',
+    outline:      '1px solid #fde68a',
+    boxShadow:    '0 0 0 1px #fde68a, 0 4px 16px rgba(245,158,11,0.12)',
+  },
+  premier: {
+    borderRadius: '16px',
+    overflow:     'hidden',
+    outline:      '2px solid #f59e0b',
+    boxShadow:    '0 0 0 2px #f59e0b, 0 8px 24px rgba(245,158,11,0.2)',
+  },
 }
 
 export default function FeaturedCardWrapper({
   tier,
   children,
-  className = '',
 }: {
-  tier: Tier
+  tier:     Tier
   children: React.ReactNode
-  className?: string
 }) {
   if (!tier) return <>{children}</>
-
   return (
-    <div className={`rounded-xl overflow-hidden ${BORDER_CLASS[tier] ?? ''} ${className}`}>
+    <div style={BORDER_STYLE[tier] ?? { borderRadius: '16px', overflow: 'hidden' }}>
       {children}
     </div>
   )
