@@ -5,6 +5,7 @@ import HeroSection from '@/components/home/HeroSection'
 import CategorySection from '@/components/home/CategorySection'
 import RegionSection from '@/components/home/RegionSection'
 import CitiesSection from '@/components/home/CitiesSection'
+import ArticlesSection from '@/components/home/ArticlesSection'
 
 export default async function HomePage() {
   const payload = await getPayload({ config: await configPromise })
@@ -15,8 +16,6 @@ export default async function HomePage() {
     depth: 1,
   })
 
-  console.log('restaurant sample:', JSON.stringify(Object.keys(docs[0] ?? {})))
-   
   const cities = docs.map(c => ({
     slug:        c.slug,
     name:        c.name,
@@ -29,6 +28,25 @@ export default async function HomePage() {
     highlights:  (c.highlights ?? []).map((h: any) => h.highlight),
   }))
 
+  const articlesResult = await payload.find({
+    collection: 'sponsored-articles',
+    depth: 1,
+    limit: 10,
+    sort: '-publishedDate',
+  })
+
+  const articles = articlesResult.docs
+    .filter((a: any) => a.status === 'published')
+    .slice(0, 4)
+    .map((a: any) => ({
+      slug:      a.slug,
+      title:     a.title,
+      excerpt:   a.excerpt ?? '',
+      category:  a.category ?? '',
+      heroImage: typeof a.heroImage === 'object' ? a.heroImage?.url ?? '' : '',
+      isEditorial: a.isEditorial !== false,
+    }))
+
   return (
     <div style={{ background: '#fafaf9' }}>
       <HeaderWrapper variant="transparent" />
@@ -36,6 +54,7 @@ export default async function HomePage() {
       <CategorySection />
       <RegionSection />
       <CitiesSection cities={cities} />
+      <ArticlesSection articles={articles} />
     </div>
   )
 }

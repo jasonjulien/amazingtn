@@ -294,9 +294,7 @@ export default function AdvertisePage() {
               <div style={{ padding: '28px 32px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
                   <h3 style={{ fontSize: '20px', fontWeight: 700, color: '#1e293b' }}>{articleTier.name}</h3>
-                  <span style={{ fontSize: '11px', fontWeight: 700, color: '#64748b', background: '#f1f5f9', border: '1px solid #e2e8f0', padding: '3px 10px', borderRadius: '9999px' }}>
-                    Coming Soon
-                  </span>
+
                 </div>
                 <p style={{ color: '#64748b', fontSize: '13px', marginBottom: '16px' }}>{articleTier.tagline}</p>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
@@ -308,21 +306,30 @@ export default function AdvertisePage() {
                   ))}
                 </div>
               </div>
-              <div style={{ padding: '28px 32px', textAlign: 'center', borderLeft: '1px solid #e5e5e5', minWidth: '200px' }}>
-                <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px', justifyContent: 'center', marginBottom: '4px' }}>
-                  <span style={{ fontSize: '42px', fontWeight: 700, color: '#1e293b' }}>${articleTier.price}</span>
-                </div>
-                <p style={{ color: '#94a3b8', fontSize: '13px', marginBottom: '16px' }}>one-time</p>
-                <a href="mailto:hello@amazingtn.com" style={{
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  height: '44px', borderRadius: '9999px',
-                  fontWeight: 600, fontSize: '14px', textDecoration: 'none',
-                  background: '#f1f5f9', color: '#475569',
-                  border: '1px solid #e5e5e5',
-                }}>
-                  Join waitlist →
-                </a>
-              </div>
+              <div style={{ padding: '28px 32px', textAlign: 'center', borderLeft: '1px solid #e5e5e5', minWidth: '220px' }}>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px', justifyContent: 'center', marginBottom: '4px' }}>
+              <span style={{ fontSize: '42px', fontWeight: 700, color: '#1e293b' }}>${articleTier.price}</span>
+            </div>
+            <p style={{ color: '#94a3b8', fontSize: '13px', marginBottom: '16px' }}>one-time</p>
+            <Link href="/articles/natchez-trace-parkway" style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              height: '40px', borderRadius: '9999px',
+              fontWeight: 500, fontSize: '13px', textDecoration: 'none',
+              background: '#f1f5f9', color: '#475569',
+              border: '1px solid #e5e5e5',
+              marginBottom: '10px',
+            }}>
+              See a live example →
+            </Link>
+            <a href="mailto:hello@amazingtn.com" style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              height: '44px', borderRadius: '9999px',
+              fontWeight: 600, fontSize: '14px', textDecoration: 'none',
+              background: '#0f172a', color: '#fff',
+            }}>
+              Get started →
+            </a>
+          </div>
             </div>
           </div>
 
