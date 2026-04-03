@@ -19,6 +19,8 @@ import { plugins } from './plugins'
 import { defaultLexical } from '@/fields/defaultLexical'
 import { getServerSideURL } from './utilities/getURL'
 import { Sponsors } from './collections/Sponsors'
+import { SponsoredArticles } from './collections/SponsoredArticles'
+
 
 
 const filename = fileURLToPath(import.meta.url)
@@ -54,7 +56,7 @@ export default buildConfig({
       connectionTimeoutMillis: 10000,
     },
   }),
-  collections: [Pages, Posts, Media, Categories, Users, Regions, Cities, Destinations, Restaurants, Sponsors],
+  collections: [Pages, Posts, Media, Categories, Users, Regions, Cities, Destinations, Restaurants, Sponsors, SponsoredArticles],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Header, Footer],
   plugins,

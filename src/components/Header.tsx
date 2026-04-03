@@ -16,6 +16,7 @@ const navLinks = [
   { label: 'Regions',     href: '/regions' },
   { label: 'Cities',      href: '/cities' },
   { label: 'Restaurants', href: '/restaurants' },
+  { label: 'Articles',   href: '/articles' },
   { label: 'Advertise',   href: '/advertise' },
 ]
 

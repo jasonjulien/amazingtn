@@ -77,6 +77,7 @@ export interface Config {
     destinations: Destination;
     restaurants: Restaurant;
     sponsors: Sponsor;
+    'sponsored-articles': SponsoredArticle;
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
@@ -104,6 +105,7 @@ export interface Config {
     destinations: DestinationsSelect<false> | DestinationsSelect<true>;
     restaurants: RestaurantsSelect<false> | RestaurantsSelect<true>;
     sponsors: SponsorsSelect<false> | SponsorsSelect<true>;
+    'sponsored-articles': SponsoredArticlesSelect<false> | SponsoredArticlesSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
@@ -297,7 +299,13 @@ export interface Post {
  */
 export interface Media {
   id: number;
+  /**
+   * Describe the image for SEO and screen readers, e.g. "Tree-canopied road on the Natchez Trace in fall"
+   */
   alt?: string | null;
+  /**
+   * Optional visible caption displayed below the image in articles
+   */
   caption?: {
     root: {
       type: string;
@@ -313,6 +321,10 @@ export interface Media {
     };
     [k: string]: unknown;
   } | null;
+  /**
+   * Photographer attribution shown on hover, e.g. "Photo by Jane Smith on Unsplash"
+   */
+  credit?: string | null;
   folder?: (number | null) | FolderInterface;
   updatedAt: string;
   createdAt: string;
@@ -1017,6 +1029,76 @@ export interface Sponsor {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sponsored-articles".
+ */
+export interface SponsoredArticle {
+  id: number;
+  title: string;
+  /**
+   * URL-friendly identifier, e.g. natchez-trace-parkway
+   */
+  slug: string;
+  status: 'draft' | 'published';
+  publishedDate?: string | null;
+  /**
+   * Short summary shown in cards and meta description
+   */
+  excerpt: string;
+  heroImage?: (number | null) | Media;
+  body: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  /**
+   * Links this article back to a destination page
+   */
+  relatedDestination?: (number | null) | Destination;
+  /**
+   * Links this article to a city page for backlinks
+   */
+  relatedCity?: (number | null) | City;
+  relatedRegion?: (number | null) | Region;
+  category?: ('outdoors' | 'history' | 'food' | 'music' | 'arts' | 'family') | null;
+  /**
+   * Leave blank for AmazingTN editorial / demo articles
+   */
+  sponsorName?: string | null;
+  sponsorUrl?: string | null;
+  sponsorLogo?: (number | null) | Media;
+  /**
+   * Check for demo/editorial articles; uncheck for paid sponsor content
+   */
+  isEditorial?: boolean | null;
+  seo?: {
+    /**
+     * Defaults to article title if blank
+     */
+    title?: string | null;
+    /**
+     * Shown in Google results and social shares
+     */
+    description?: string | null;
+  };
+  /**
+   * Show this article as the sample on the Advertise page
+   */
+  featuredOnAdvertisePage?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects".
  */
 export interface Redirect {
@@ -1244,6 +1326,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'sponsors';
         value: number | Sponsor;
+      } | null)
+    | ({
+        relationTo: 'sponsored-articles';
+        value: number | SponsoredArticle;
       } | null)
     | ({
         relationTo: 'redirects';
@@ -1480,6 +1566,7 @@ export interface PostsSelect<T extends boolean = true> {
 export interface MediaSelect<T extends boolean = true> {
   alt?: T;
   caption?: T;
+  credit?: T;
   folder?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -1739,6 +1826,36 @@ export interface SponsorsSelect<T extends boolean = true> {
   featuredImage?: T;
   tagline?: T;
   notes?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sponsored-articles_select".
+ */
+export interface SponsoredArticlesSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  status?: T;
+  publishedDate?: T;
+  excerpt?: T;
+  heroImage?: T;
+  body?: T;
+  relatedDestination?: T;
+  relatedCity?: T;
+  relatedRegion?: T;
+  category?: T;
+  sponsorName?: T;
+  sponsorUrl?: T;
+  sponsorLogo?: T;
+  isEditorial?: T;
+  seo?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+      };
+  featuredOnAdvertisePage?: T;
   updatedAt?: T;
   createdAt?: T;
 }

@@ -28,6 +28,9 @@ export const Media: CollectionConfig = {
       name: 'alt',
       type: 'text',
       //required: true,
+      admin: {
+        description: 'Describe the image for SEO and screen readers, e.g. "Tree-canopied road on the Natchez Trace in fall"',
+      },
     },
     {
       name: 'caption',
@@ -37,6 +40,16 @@ export const Media: CollectionConfig = {
           return [...rootFeatures, FixedToolbarFeature(), InlineToolbarFeature()]
         },
       }),
+      admin: {
+        description: 'Optional visible caption displayed below the image in articles',
+      },
+    },
+    {
+      name: 'credit',
+      type: 'text',
+      admin: {
+        description: 'Photographer attribution shown on hover, e.g. "Photo by Jane Smith on Unsplash"',
+      },
     },
   ],
   upload: {
