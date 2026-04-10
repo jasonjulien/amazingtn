@@ -321,14 +321,14 @@ export default function AdvertisePage() {
             }}>
               See a live example →
             </Link>
-            <a href="mailto:hello@amazingtn.com" style={{
+            <Link href="/advertise/signup?tier=article" style={{
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               height: '44px', borderRadius: '9999px',
               fontWeight: 600, fontSize: '14px', textDecoration: 'none',
               background: '#0f172a', color: '#fff',
             }}>
               Get started →
-            </a>
+            </Link>
           </div>
             </div>
           </div>
