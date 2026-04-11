@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { useState } from 'react'
 import HeaderWrapper from '@/components/HeaderWrapper'
+import { mediaUrl } from '@/lib/mediaUrl'
 
 const CATEGORIES = [
   { value: 'all', label: 'All Articles' },
