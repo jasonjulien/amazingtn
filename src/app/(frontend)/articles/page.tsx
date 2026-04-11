@@ -20,7 +20,15 @@ export default async function ArticlesPage() {
     sort: '-publishedDate',
   })
 
-  const articles = result.docs.filter((a: any) => a.status === 'published')
+  const articles = result.docs
+    .filter((a: any) => a.status === 'published')
+    .map((a: any) => ({
+      ...a,
+      heroImage:
+        typeof a.heroImage === 'object'
+          ? { ...a.heroImage, url: mediaUrl(a.heroImage?.url ?? '') }
+          : a.heroImage,
+    }))
 
   return <ArticlesIndexClient articles={articles} />
 }
