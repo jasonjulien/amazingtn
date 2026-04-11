@@ -6,6 +6,7 @@ import CategorySection from '@/components/home/CategorySection'
 import RegionSection from '@/components/home/RegionSection'
 import CitiesSection from '@/components/home/CitiesSection'
 import ArticlesSection from '@/components/home/ArticlesSection'
+import { mediaUrl } from '@/lib/mediaUrl'
 
 export default async function HomePage() {
   const payload = await getPayload({ config: await configPromise })
@@ -16,16 +17,16 @@ export default async function HomePage() {
     depth: 1,
   })
 
-  const cities = docs.map(c => ({
-    slug:        c.slug,
-    name:        c.name,
-    tagline:     c.tagline ?? '',
-    region:      typeof c.region === 'object' ? (c.region as any).slug : c.region,
+  const cities = docs.map((c) => ({
+    slug: c.slug,
+    name: c.name,
+    tagline: c.tagline ?? '',
+    region: typeof c.region === 'object' ? (c.region as any).slug : c.region,
     regionLabel: c.regionLabel ?? '',
-    population:  c.population ?? '',
+    population: c.population ?? '',
     description: c.description ?? '',
-    heroImage:   c.heroImage ?? '',
-    highlights:  (c.highlights ?? []).map((h: any) => h.highlight),
+    heroImage: mediaUrl(c.heroImage ?? ''),
+    highlights: (c.highlights ?? []).map((h: any) => h.highlight),
   }))
 
   const articlesResult = await payload.find({
@@ -39,11 +40,11 @@ export default async function HomePage() {
     .filter((a: any) => a.status === 'published')
     .slice(0, 4)
     .map((a: any) => ({
-      slug:      a.slug,
-      title:     a.title,
-      excerpt:   a.excerpt ?? '',
-      category:  a.category ?? '',
-      heroImage: typeof a.heroImage === 'object' ? a.heroImage?.url ?? '' : '',
+      slug: a.slug,
+      title: a.title,
+      excerpt: a.excerpt ?? '',
+      category: a.category ?? '',
+      heroImage: mediaUrl(typeof a.heroImage === 'object' ? (a.heroImage?.url ?? '') : ''),
       isEditorial: a.isEditorial !== false,
     }))
 

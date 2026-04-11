@@ -2,6 +2,7 @@ import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import { notFound } from 'next/navigation'
 import CityDetailClient from './CityDetailClient'
+import { mediaUrl } from '@/lib/mediaUrl'
 
 export default async function CityDetailPage({ params }: { params: Promise<{ city: string }> }) {
   const { city: citySlug } = await params
@@ -26,7 +27,7 @@ export default async function CityDetailPage({ params }: { params: Promise<{ cit
     regionLabel: city.regionLabel ?? '',
     population: city.population ?? '',
     description: city.description ?? '',
-    heroImage: city.heroImage ?? '',
+    heroImage: mediaUrl(city.heroImage ?? ''),
     highlights: (city.highlights ?? []).map((h: any) => h.highlight),
   }
 
@@ -51,7 +52,7 @@ export default async function CityDetailPage({ params }: { params: Promise<{ cit
       region: regionSlug,
       category: d.category ?? '',
       featured: d.featured ?? false,
-      heroImage: d.heroImage ?? '',
+      heroImage: mediaUrl(d.heroImage ?? ''),
     }))
 
   const cityRestaurants = restaurantsRes.docs
@@ -63,7 +64,7 @@ export default async function CityDetailPage({ params }: { params: Promise<{ cit
       cuisine: Array.isArray(r.cuisine) ? r.cuisine : r.cuisine ? [r.cuisine] : [],
       priceRange: r.priceRange ?? '',
       shortDescription: r.shortDescription ?? '',
-      heroImage: r.heroImage ?? '',
+      heroImage: mediaUrl(r.heroImage ?? ''),
       featured: r.featured ?? false,
       featuredTier: r.featuredTier ?? 'free',
       website: r.website ?? '',

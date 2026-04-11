@@ -1,6 +1,7 @@
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import CitiesClient from './CitiesClient'
+import { mediaUrl } from '@/lib/mediaUrl'
 
 export default async function CitiesPage() {
   const payload = await getPayload({ config: await configPromise })
@@ -11,16 +12,16 @@ export default async function CitiesPage() {
     depth: 1,
   })
 
-  const cities = docs.map(c => ({
-    slug:        c.slug,
-    name:        c.name,
-    tagline:     c.tagline ?? '',
-    region:      typeof c.region === 'object' ? (c.region as any).slug : c.region,
+  const cities = docs.map((c) => ({
+    slug: c.slug,
+    name: c.name,
+    tagline: c.tagline ?? '',
+    region: typeof c.region === 'object' ? (c.region as any).slug : c.region,
     regionLabel: c.regionLabel ?? '',
-    population:  c.population ?? '',
+    population: c.population ?? '',
     description: c.description ?? '',
-    heroImage:   c.heroImage ?? '',
-    highlights:  (c.highlights ?? []).map((h: any) => h.highlight),
+    heroImage: mediaUrl(c.heroImage ?? ''),
+    highlights: (c.highlights ?? []).map((h: any) => h.highlight),
   }))
 
   return <CitiesClient cities={cities} />

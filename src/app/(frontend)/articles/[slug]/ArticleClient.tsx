@@ -11,7 +11,7 @@ interface ArticleClientProps {
 export default function ArticleClient({ article }: ArticleClientProps) {
   const heroUrl =
     typeof article.heroImage === 'object' && article.heroImage?.url
-      ? article.heroImage.url
+      ? mediaUrl(article.heroImage.url)
       : null
 
   const heroCredit =
@@ -342,8 +342,8 @@ export default function ArticleClient({ article }: ArticleClientProps) {
                     margin: '0 0 20px',
                   }}
                 >
-                  AmazingTN's Sponsored Articles put your story in front of Tennessee
-                  travelers actively planning their next trip.
+                  AmazingTN's Sponsored Articles put your story in front of Tennessee travelers
+                  actively planning their next trip.
                 </p>
                 <Link
                   href="/advertise"

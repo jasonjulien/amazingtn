@@ -2,6 +2,7 @@ import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import { notFound } from 'next/navigation'
 import DestinationDetailClient from './DestinationDetailClient'
+import { mediaUrl } from '@/lib/mediaUrl'
 
 export default async function DestinationDetailPage({
   params,
@@ -30,7 +31,7 @@ export default async function DestinationDetailPage({
     region: regionSlug as 'east' | 'middle' | 'west',
     category: doc.category as 'music' | 'nature' | 'history' | 'food' | 'adventure' | 'family',
     featured: doc.featured ?? false,
-    heroImage: doc.heroImage ?? '',
+    heroImage: mediaUrl(doc.heroImage ?? ''),
   }
 
   const related = docs
@@ -47,7 +48,7 @@ export default async function DestinationDetailPage({
         | 'west',
       category: d.category as any,
       featured: d.featured ?? false,
-      heroImage: d.heroImage ?? '',
+      heroImage: mediaUrl(d.heroImage ?? ''),
     }))
 
   return <DestinationDetailClient destination={destination} related={related} />

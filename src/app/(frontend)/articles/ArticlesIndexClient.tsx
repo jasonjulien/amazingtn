@@ -31,9 +31,7 @@ export default function ArticlesIndexClient({ articles }: ArticlesIndexClientPro
   const [activeCategory, setActiveCategory] = useState('all')
 
   const filtered =
-    activeCategory === 'all'
-      ? articles
-      : articles.filter((a) => a.category === activeCategory)
+    activeCategory === 'all' ? articles : articles.filter((a) => a.category === activeCategory)
 
   const featured = filtered[0]
   const rest = filtered.slice(1)
@@ -69,7 +67,8 @@ export default function ArticlesIndexClient({ articles }: ArticlesIndexClientPro
             style={{
               position: 'absolute',
               inset: 0,
-              background: 'linear-gradient(to bottom, rgba(15,23,42,0.6) 0%, rgba(15,23,42,0.85) 100%)',
+              background:
+                'linear-gradient(to bottom, rgba(15,23,42,0.6) 0%, rgba(15,23,42,0.85) 100%)',
             }}
           />
           <p
@@ -108,8 +107,8 @@ export default function ArticlesIndexClient({ articles }: ArticlesIndexClientPro
               margin: '0 auto',
             }}
           >
-            Destination features, travel guides, and hidden gems — everything you need
-            to explore Tennessee like a local.
+            Destination features, travel guides, and hidden gems — everything you need to explore
+            Tennessee like a local.
           </p>
         </div>
 
@@ -146,9 +145,7 @@ export default function ArticlesIndexClient({ articles }: ArticlesIndexClientPro
                   fontWeight: activeCategory === cat.value ? 600 : 400,
                   color: activeCategory === cat.value ? '#d97706' : '#64748b',
                   borderBottom:
-                    activeCategory === cat.value
-                      ? '2px solid #f59e0b'
-                      : '2px solid transparent',
+                    activeCategory === cat.value ? '2px solid #f59e0b' : '2px solid transparent',
                   whiteSpace: 'nowrap',
                   transition: 'color 0.15s, border-color 0.15s',
                 }}
@@ -198,7 +195,7 @@ export default function ArticlesIndexClient({ articles }: ArticlesIndexClientPro
                     <div style={{ position: 'relative', minHeight: 340, background: '#1e293b' }}>
                       {featured.heroImage?.url && (
                         <img
-                          src={featured.heroImage.url}
+                          src={mediaUrl(featured.heroImage.url)}
                           alt={featured.title}
                           style={{
                             position: 'absolute',
@@ -338,8 +335,8 @@ export default function ArticlesIndexClient({ articles }: ArticlesIndexClientPro
               lineHeight: 1.6,
             }}
           >
-            Reach Tennessee travelers actively planning their next trip with a
-            professionally written sponsored article.
+            Reach Tennessee travelers actively planning their next trip with a professionally
+            written sponsored article.
           </p>
           <Link
             href="/advertise"
@@ -390,7 +387,7 @@ function ArticleCard({ article }: { article: any }) {
         <div style={{ position: 'relative', height: 200, background: '#1e293b' }}>
           {article.heroImage?.url && (
             <img
-              src={article.heroImage.url}
+              src={mediaUrl(article.heroImage.url)}
               alt={article.title}
               style={{ width: '100%', height: '100%', objectFit: 'cover' }}
             />
@@ -450,9 +447,7 @@ function ArticleCard({ article }: { article: any }) {
               {article.excerpt}
             </p>
           )}
-          <span style={{ fontSize: 13, fontWeight: 600, color: '#d97706' }}>
-            Read more →
-          </span>
+          <span style={{ fontSize: 13, fontWeight: 600, color: '#d97706' }}>Read more →</span>
         </div>
       </div>
     </Link>
