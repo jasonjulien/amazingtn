@@ -2,6 +2,7 @@ import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import type { Metadata } from 'next'
 import ArticlesIndexClient from './ArticlesIndexClient'
+import { mediaUrl } from '@/lib/mediaUrl'
 
 export const metadata: Metadata = {
   title: 'Articles & Guides | AmazingTN',
