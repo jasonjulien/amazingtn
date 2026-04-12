@@ -24,10 +24,7 @@ export default async function ArticlesPage() {
     .filter((a: any) => a.status === 'published')
     .map((a: any) => ({
       ...a,
-      heroImage:
-        typeof a.heroImage === 'object'
-          ? { ...a.heroImage, url: mediaUrl(a.heroImage?.url ?? '') }
-          : a.heroImage,
+      heroImage: mediaUrl(a.heroImage ?? ''),
     }))
 
   return <ArticlesIndexClient articles={articles} />

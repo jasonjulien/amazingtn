@@ -9,15 +9,9 @@ interface ArticleClientProps {
 }
 
 export default function ArticleClient({ article }: ArticleClientProps) {
-  const heroUrl =
-    typeof article.heroImage === 'object' && article.heroImage?.url
-      ? mediaUrl(article.heroImage.url)
-      : null
+  const heroUrl = article.heroImage ? mediaUrl(article.heroImage) : null
 
-  const heroCredit =
-    typeof article.heroImage === 'object' && article.heroImage?.credit
-      ? article.heroImage.credit
-      : null
+  const heroCredit = null
 
   const isEditorial = article.isEditorial !== false
   const hasSponsor = !isEditorial && article.sponsorName
