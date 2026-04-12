@@ -44,7 +44,7 @@ export default async function HomePage() {
       title: a.title,
       excerpt: a.excerpt ?? '',
       category: a.category ?? '',
-      heroImage: mediaUrl(typeof a.heroImage === 'object' ? (a.heroImage?.url ?? '') : ''),
+      heroImage: mediaUrl(a.heroImage ?? ''),
       isEditorial: a.isEditorial !== false,
     }))
 
