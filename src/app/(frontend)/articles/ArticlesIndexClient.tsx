@@ -194,9 +194,9 @@ export default function ArticlesIndexClient({ articles }: ArticlesIndexClientPro
                   >
                     {/* Image */}
                     <div style={{ position: 'relative', minHeight: 340, background: '#1e293b' }}>
-                      {featured.heroImage?.url && (
+                      {featured.heroImage && (
                         <img
-                          src={mediaUrl(featured.heroImage.url)}
+                          src={mediaUrl(featured.heroImage)}
                           alt={featured.title}
                           style={{
                             position: 'absolute',
@@ -386,9 +386,9 @@ function ArticleCard({ article }: { article: any }) {
       >
         {/* Thumbnail */}
         <div style={{ position: 'relative', height: 200, background: '#1e293b' }}>
-          {article.heroImage?.url && (
+          {article.heroImage && (
             <img
-              src={mediaUrl(article.heroImage.url)}
+              src={mediaUrl(article.heroImage)}
               alt={article.title}
               style={{ width: '100%', height: '100%', objectFit: 'cover' }}
             />
