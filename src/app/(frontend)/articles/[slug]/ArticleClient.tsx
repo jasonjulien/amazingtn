@@ -3,6 +3,7 @@
 import React from 'react'
 import Link from 'next/link'
 import HeaderWrapper from '@/components/HeaderWrapper'
+import { mediaUrl } from '@/lib/mediaUrl'
 
 interface ArticleClientProps {
   article: any
