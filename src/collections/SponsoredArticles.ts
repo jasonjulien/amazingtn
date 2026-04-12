@@ -42,9 +42,11 @@ export const SponsoredArticles: CollectionConfig = {
     },
     {
       name: 'heroImage',
-      type: 'upload',
-      relationTo: 'media',
+      type: 'text',
       required: false,
+      admin: {
+        description: 'Full image URL, e.g. https://images.unsplash.com/photo-...',
+      },
     },
     {
       name: 'body',

@@ -1044,7 +1044,10 @@ export interface SponsoredArticle {
    * Short summary shown in cards and meta description
    */
   excerpt: string;
-  heroImage?: (number | null) | Media;
+  /**
+   * Full image URL, e.g. https://images.unsplash.com/photo-...
+   */
+  heroImage?: string | null;
   body: {
     root: {
       type: string;
