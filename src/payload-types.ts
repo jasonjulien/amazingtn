@@ -1048,6 +1048,10 @@ export interface SponsoredArticle {
    * Full image URL, e.g. https://images.unsplash.com/photo-...
    */
   heroImage?: string | null;
+  /**
+   * Photo credit, e.g. "Photo by John Smith on Unsplash"
+   */
+  heroImageCredit?: string | null;
   body: {
     root: {
       type: string;
@@ -1843,6 +1847,7 @@ export interface SponsoredArticlesSelect<T extends boolean = true> {
   publishedDate?: T;
   excerpt?: T;
   heroImage?: T;
+  heroImageCredit?: T;
   body?: T;
   relatedDestination?: T;
   relatedCity?: T;

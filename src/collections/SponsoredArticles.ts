@@ -49,6 +49,14 @@ export const SponsoredArticles: CollectionConfig = {
       },
     },
     {
+      name: 'heroImageCredit',
+      type: 'text',
+      required: false,
+      admin: {
+        description: 'Photo credit, e.g. "Photo by John Smith on Unsplash"',
+      },
+    },
+    {
       name: 'body',
       type: 'richText',
       required: true,

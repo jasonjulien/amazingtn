@@ -4,6 +4,8 @@ import type { Metadata } from 'next'
 import ArticlesIndexClient from './ArticlesIndexClient'
 import { mediaUrl } from '@/lib/mediaUrl'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = {
   title: 'Articles & Guides | AmazingTN',
   description:

@@ -8,6 +8,8 @@ import CitiesSection from '@/components/home/CitiesSection'
 import ArticlesSection from '@/components/home/ArticlesSection'
 import { mediaUrl } from '@/lib/mediaUrl'
 
+export const dynamic = 'force-dynamic'
+
 export default async function HomePage() {
   const payload = await getPayload({ config: await configPromise })
 
