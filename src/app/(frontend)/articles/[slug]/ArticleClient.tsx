@@ -12,7 +12,7 @@ interface ArticleClientProps {
 export default function ArticleClient({ article }: ArticleClientProps) {
   const heroUrl = article.heroImage ? mediaUrl(article.heroImage) : null
 
-  const heroCredit = null
+  const heroCredit = article.heroImageCredit ?? null
 
   const isEditorial = article.isEditorial !== false
   const hasSponsor = !isEditorial && article.sponsorName
